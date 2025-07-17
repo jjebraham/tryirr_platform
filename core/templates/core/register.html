@@ -1,0 +1,68 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-10 bg-white p-6 rounded shadow">
+  <h2 class="text-2xl font-bold mb-4">Create an Account</h2>
+  
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    <!-- Username Field -->
+    <div class="mb-4">
+      <label for="{{ form.username.id_for_label }}" class="block font-medium">Username:</label>
+      {{ form.username }}
+      {% if form.username.errors %}
+        <p class="text-red-500 text-sm">{{ form.username.errors }}</p>
+      {% endif %}
+      <small class="text-gray-500">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</small>
+    </div>
+
+    <!-- Email Field -->
+    <div class="mb-4">
+      <label for="{{ form.email.id_for_label }}" class="block font-medium">Email address:</label>
+      {{ form.email }}
+      {% if form.email.errors %}
+        <p class="text-red-500 text-sm">{{ form.email.errors }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Phone Field -->
+    <div class="mb-4">
+      <label for="{{ form.phone_number.id_for_label }}" class="block font-medium">Phone number:</label>
+      {{ form.phone_number }}
+      {% if form.phone_number.errors %}
+        <p class="text-red-500 text-sm">{{ form.phone_number.errors }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Password1 Field -->
+    <div class="mb-4">
+      <label for="{{ form.password1.id_for_label }}" class="block font-medium">Password:</label>
+      {{ form.password1 }}
+      {% if form.password1.errors %}
+        <p class="text-red-500 text-sm">{{ form.password1.errors }}</p>
+      {% endif %}
+      <small class="text-gray-500">
+        - At least 8 characters<br>
+        - Can’t be entirely numeric or too similar to personal info<br>
+        - Avoid common passwords
+      </small>
+    </div>
+
+    <!-- Password2 Field -->
+    <div class="mb-4">
+      <label for="{{ form.password2.id_for_label }}" class="block font-medium">Confirm Password:</label>
+      {{ form.password2 }}
+      {% if form.password2.errors %}
+        <p class="text-red-500 text-sm">{{ form.password2.errors }}</p>
+      {% endif %}
+      <small class="text-gray-500">Re-enter your password for verification.</small>
+    </div>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Register</button>
+  </form>
+</div>
+{% endblock %}
+
