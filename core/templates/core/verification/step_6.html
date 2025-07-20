@@ -1,0 +1,13 @@
+{% extends 'core/verification/verification_index.html' %}
+{% block step_content %}
+<h2 class="text-xl font-semibold mb-4">Proof of Address</h2>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="hidden" name="step" value="{{ step }}">
+  <div class="flex justify-between mt-4">
+    <a href="?step={{ step|add:-1 }}" class="btn-secondary">Back</a>
+    <button type="submit" class="btn-primary">Submit</button>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'core/verification/verification_index.html' %}
+{% block step_content %}
+<h2 class="text-xl font-semibold mb-4">Personal Information</h2>
+<p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+<p>Email: {{ user.email }}</p>
+<p>Phone: {{ user.phone_number }}</p>
+{% if step < steps|length %}
+  <div class="mt-4 text-right">
+    <a href="?step={{ step|add:1 }}" class="btn-primary">Next</a>
+  </div>
+{% endif %}
+{% endblock %}
