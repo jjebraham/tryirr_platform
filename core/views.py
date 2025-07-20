@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 import random
 from django.urls import reverse
 from django.core.mail import send_mail
+from django.conf import settings
 from .forms import (
     PersonalInfoForm,
     VerificationCodeForm,
@@ -133,6 +134,11 @@ def kyc(request):
     return render(
         request,
         "core/kyc.html",
-        {"form": form, "step": step, "steps": steps_context},
+        {
+            "form": form,
+            "step": step,
+            "steps": steps_context,
+            "deposit_instructions": settings.DEPOSIT_INSTRUCTIONS,
+        },
     )
 

@@ -19,6 +19,9 @@
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
       {{ form.as_p }}
+      {% if step == 6 %}
+        <p class="text-sm text-gray-600 mb-4">{{ deposit_instructions }}</p>
+      {% endif %}
       <div class="mt-4 text-right">
         <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">
           {% if step == 6 %}{% trans "Finish" %}{% else %}{% trans "Continue" %}{% endif %}
