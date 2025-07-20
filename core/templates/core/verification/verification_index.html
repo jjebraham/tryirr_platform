@@ -1,0 +1,26 @@
+{% extends 'core/base.html' %}
+{% block title %}Verification Center{% endblock %}
+
+{% block content %}
+<div class="flex flex-col lg:flex-row">
+  <aside class="lg:w-1/4 mb-4 lg:mb-0">
+    <ul class="space-y-2">
+      {% for step in steps %}
+        {% with level=forloop.counter0 %}
+        <li class="flex items-center space-x-2 {% if level < user.kyc_level %}text-green-600{% elif level+1 == step %}font-semibold{% else %}text-gray-400{% endif %}">
+          {% if level < user.kyc_level %}
+            ✓
+          {% elif level+1 > step %}
+            🔒
+          {% endif %}
+          <span>{{ step.label }}</span>
+        </li>
+        {% endwith %}
+      {% endfor %}
+    </ul>
+  </aside>
+  <section class="flex-1 bg-white p-4 rounded shadow">
+    {% block step_content %}{% endblock %}
+  </section>
+</div>
+{% endblock %}

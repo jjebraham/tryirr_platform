@@ -36,3 +36,47 @@ class ConversionForm(forms.Form):
         )
     )
 
+
+class EmailVerificationForm(forms.ModelForm):
+    verification_code = forms.CharField(required=False)
+
+    class Meta:
+        model = CustomUser
+        fields = ["email"]
+
+
+class PhoneVerificationForm(forms.ModelForm):
+    verification_code = forms.CharField(required=False)
+
+    class Meta:
+        model = CustomUser
+        fields = ["phone_number"]
+
+
+class TwoFactorForm(forms.Form):
+    totp = forms.CharField(max_length=6)
+
+
+class IDSelfieForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ["id_document", "selfie"]
+
+
+class ProofOfAddressForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = [
+            "address_country",
+            "address_city",
+            "address_zip",
+            "address_street",
+            "proof_of_address",
+        ]
+
+
+class DepositProofForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ["deposit_receipt"]
+
