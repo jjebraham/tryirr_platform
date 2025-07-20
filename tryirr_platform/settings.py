@@ -14,11 +14,8 @@ ALLOWED_HOSTS = [
     "localhost",
 ]
 
-# ─── PROXY & CSRF TRUST ──────────────────────────────────────────────────────────
-# Tell Django it's behind HTTPS when Nginx sets X-Forwarded-Proto
+# ─── PROXY & CSRF TRUST ──────────────────────────────────────────────────────────        
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
-# These must include the scheme for POST→CSRF checks
 CSRF_TRUSTED_ORIGINS = [
     "https://kianirad.website",
     "https://www.kianirad.website",
@@ -46,6 +43,7 @@ INSTALLED_APPS = [
     "core",
 ]
 
+AUTH_USER_MODEL = "core.CustomUser"
 SITE_ID = 3
 
 # ─── MIDDLEWARE ─────────────────────────────────────────────────────────────────
@@ -67,18 +65,16 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            BASE_DIR / "templates",            # project-wide overrides
-            BASE_DIR / "core" / "templates",   # your core app
+            BASE_DIR / "templates",
+            BASE_DIR / "core" / "templates",
         ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
-                # Django built-ins
                 "django.template.context_processors.debug",
-                "django.template.context_processors.request",   # required by allauth
+                "django.template.context_processors.request",   # required by allauth      
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                # -- no allauth.account.context_processors here, they’ve been removed in v64+ --
             ],
         },
     },
@@ -112,9 +108,8 @@ USE_TZ        = True
 # ─── STATIC & MEDIA ──────────────────────────────────────────────────────────────        
 STATIC_URL  = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
-MEDIA_URL  = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL   = "/media/"
+MEDIA_ROOT  = BASE_DIR / "media"
 
 # ─── AUTH BACKENDS & allauth SETTINGS ──────────────────────────────────────────
 AUTHENTICATION_BACKENDS = [
@@ -122,15 +117,15 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
-# allauth account config
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED        = True
 ACCOUNT_EMAIL_VERIFICATION    = "optional"
 ACCOUNT_LOGIN_ON_GET          = True
 ACCOUNT_SIGNUP_FIELDS         = ["email", "password1", "password2"]
 
-LOGIN_REDIRECT_URL  = "dashboard"
-LOGOUT_REDIRECT_URL = "home"
+# ✱ namespaced redirects:
+LOGIN_REDIRECT_URL  = "core:dashboard"
+LOGOUT_REDIRECT_URL = "core:home"
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {

@@ -2,19 +2,15 @@
 
 from django.contrib import admin
 from django.urls import path, include
-from core.views import home, dashboard
 
 urlpatterns = [
-    # Admin site
+    # Admin
     path('admin/', admin.site.urls),
 
-    # allauth (signup / login / logout / password reset)
+    # allauth
     path('accounts/', include('allauth.urls')),
 
-    # Your home page
-    path('', home, name='home'),
-
-    # Post-login landing page
-    path('dashboard/', dashboard, name='dashboard'),
+    # all of your "core" app’s URLs, under the "core" namespace
+    path('', include(('core.urls', 'core'), namespace='core')),
 ]
 

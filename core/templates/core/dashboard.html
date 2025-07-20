@@ -1,31 +1,95 @@
+{# core/templates/core/dashboard.html #}
 {% extends "core/base.html" %}
+{% load i18n %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-      <div class="card shadow-sm">
-        <div class="card-header bg-white">
-          <h2 class="mb-0">Dashboard</h2>
-        </div>
-        <div class="card-body">
-          <p class="lead">Welcome, <strong>{{ user.username }}</strong>!</p>
-          <p>Your KYC level is <strong>{{ user.kyc_level }}</strong>.</p>
+<div class="max-w-7xl mx-auto">
 
-          <div class="mt-4">
-            {# if you later add a kyc view, give it a URL name 'kyc' and uncomment this #}
-            {# <a href="{% url 'kyc' %}" class="btn btn-outline-primary me-2">Complete KYC</a> #}
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">
+    {% trans "Dashboard" %}
+  </h1>
 
-            <a href="{% url 'account_logout' %}" class="btn btn-danger">
-              Log out
-            </a>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Exchange Rates Card -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="text-xl font-semibold">
+          {% trans "Exchange Rates" %}
+        </h2>
+      </div>
+      <div class="p-4 space-y-2">
+        {% if rates.TRY_IRR %}
+          <div class="flex justify-between text-gray-700 dark:text-gray-300">
+            <span>1 TRY →</span>
+            <span>{{ rates.TRY_IRR|floatformat:2 }} IRR</span>
           </div>
-        </div>
+          <div class="flex justify-between text-gray-700 dark:text-gray-300">
+            <span>1 IRR →</span>
+            <span>{{ rates.IRR_TRY|floatformat:6 }} TRY</span>
+          </div>
+        {% else %}
+          <p class="text-red-500">
+            {% trans "Unable to fetch live rates right now." %}
+          </p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Your Balances Card -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="text-xl font-semibold">
+          {% trans "Your Balances" %}
+        </h2>
+      </div>
+      <div class="p-4">
+        <p class="text-gray-600 dark:text-gray-400">
+          {% trans "Coming soon…" %}
+        </p>
       </div>
     </div>
   </div>
+
+  <!-- Instant Converter Card -->
+  <div class="card mb-8">
+    <div class="card-header">
+      <h2 class="text-xl font-semibold">
+        {% trans "Instant Converter" %}
+      </h2>
+    </div>
+    <div class="p-4">
+      <form method="get" class="flex flex-wrap items-end gap-4">
+        <div class="flex-1 min-w-[120px]">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            {% trans "Convert:" %}
+          </label>
+          {{ conversion_form.direction }}
+        </div>
+        <div class="flex-1 min-w-[120px]">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            {% trans "Amount:" %}
+          </label>
+          {{ conversion_form.amount }}
+        </div>
+        <div>
+          <button type="submit" class="btn-primary">
+            {% trans "Convert" %}
+          </button>
+        </div>
+        {% if conversion_result is not None %}
+          <div class="w-full mt-4">
+            <p class="text-lg font-medium text-gray-900 dark:text-gray-100">
+              {% trans "Result:" %} 
+              {{ conversion_result|floatformat:2 }}
+            </p>
+          </div>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
 </div>
 {% endblock %}
 
