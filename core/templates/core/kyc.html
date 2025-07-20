@@ -2,53 +2,45 @@
 {% extends "core/base.html" %}
 {% load i18n %}
 
-{% block extra_head %}
-<script src="https://cdn.tailwindcss.com"></script>
-{% endblock %}
+{% block title %}{% trans "KYC Verification" %}{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4">
-  <div class="w-full max-w-lg bg-white p-8 rounded-xl shadow-lg">
+<div class="max-w-xl mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 shadow">
+  <h1 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+    {% trans "Complete Your KYC" %}
+  </h1>
 
-    <h2 class="text-2xl font-extrabold text-gray-900 mb-6 text-center">
-      {% trans "Complete Your KYC" %}
-    </h2>
+  <form method="post" enctype="multipart/form-data" class="space-y-4">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
 
-    <p class="mb-4 text-sm text-gray-600">
-      {% trans "Your current KYC level is" %} <strong>{{ current_level }}</strong>.
-      {% trans "Upload the following to advance to the next level." %}
-    </p>
+    <div>
+      {{ form.full_name.label_tag }}
+      {{ form.full_name }}
+      {{ form.full_name.errors }}
+    </div>
 
-    <form method="post" enctype="multipart/form-data" class="space-y-6">
-      {% csrf_token %}
-      {{ form.non_field_errors }}
+    <div>
+      {{ form.phone_number.label_tag }}
+      {{ form.phone_number }}
+      {{ form.phone_number.errors }}
+    </div>
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700">
-          {{ form.id_document.label_tag }}
-        </label>
-        {{ form.id_document }}
-        <p class="text-xs text-gray-500">{{ form.id_document.help_text }}</p>
-        {{ form.id_document.errors }}
-      </div>
+    <div>
+      {{ form.id_document.label_tag }}
+      {{ form.id_document }}
+      {{ form.id_document.errors }}
+    </div>
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700">
-          {{ form.selfie.label_tag }}
-        </label>
-        {{ form.selfie }}
-        <p class="text-xs text-gray-500">{{ form.selfie.help_text }}</p>
-        {{ form.selfie.errors }}
-      </div>
+    <div>
+      {{ form.selfie.label_tag }}
+      {{ form.selfie }}
+      {{ form.selfie.errors }}
+    </div>
 
-      <div>
-        <button type="submit"
-                class="w-full py-3 rounded-full bg-black text-white font-medium hover:bg-gray-800">
-          {% trans "Submit KYC Documents" %}
-        </button>
-      </div>
-    </form>
-
-  </div>
+    <button type="submit" class="btn-primary">
+      {% trans "Submit for Verification" %}
+    </button>
+  </form>
 </div>
 {% endblock %}
