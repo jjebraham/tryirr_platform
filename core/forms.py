@@ -4,6 +4,22 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from .models import CustomUser
 
+
+class PersonalInfoForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ["first_name", "last_name", "date_of_birth", "country"]
+        widgets = {
+            "date_of_birth": forms.DateInput(attrs={"type": "date", "class": "border rounded p-2"}),
+            "country": forms.TextInput(attrs={"class": "border rounded p-2"}),
+            "first_name": forms.TextInput(attrs={"class": "border rounded p-2"}),
+            "last_name": forms.TextInput(attrs={"class": "border rounded p-2"}),
+        }
+
+
+class VerificationCodeForm(forms.Form):
+    code = forms.CharField(max_length=6, widget=forms.TextInput(attrs={"class": "border rounded p-2"}))
+
 class KYCForm(forms.ModelForm):
     class Meta:
         model = CustomUser
@@ -16,6 +32,24 @@ class KYCForm(forms.ModelForm):
             "phone_number": forms.TextInput(attrs={"class": "border rounded p-2"}),
             # file‑inputs get their own default widget
         }
+
+
+class DocumentUploadForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ["id_document", "selfie"]
+
+
+class AddressProofForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ["proof_of_address"]
+
+
+class DepositProofForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ["deposit_proof"]
 
 class ConversionForm(forms.Form):
     CHOICES = [

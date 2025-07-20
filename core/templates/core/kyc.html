@@ -1,54 +1,40 @@
-{# core/templates/core/kyc.html #}
 {% extends "core/base.html" %}
 {% load i18n %}
 
-{% block extra_head %}
-<script src="https://cdn.tailwindcss.com"></script>
-{% endblock %}
-
 {% block content %}
-<div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4">
-  <div class="w-full max-w-lg bg-white p-8 rounded-xl shadow-lg">
-
-    <h2 class="text-2xl font-extrabold text-gray-900 mb-6 text-center">
-      {% trans "Complete Your KYC" %}
-    </h2>
-
-    <p class="mb-4 text-sm text-gray-600">
-      {% trans "Your current KYC level is" %} <strong>{{ current_level }}</strong>.
-      {% trans "Upload the following to advance to the next level." %}
-    </p>
-
-    <form method="post" enctype="multipart/form-data" class="space-y-6">
+<div class="mx-auto max-w-4xl lg:flex gap-8">
+  <div class="w-full lg:w-1/3 mb-6 lg:mb-0">
+    <ul id="wizard-steps" class="space-y-2">
+      {% for s in steps %}
+      <li class="flex items-center {% if forloop.counter == step %}font-semibold text-blue-600{% elif s.done %}text-green-600{% else %}text-gray-500{% endif %}">
+        <span class="mr-2">
+          {% if s.done %}✔{% else %}{{ forloop.counter }}{% endif %}
+        </span>
+        <span>{{ s.name }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="flex-1 bg-white p-6 rounded shadow">
+    <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
-      {{ form.non_field_errors }}
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700">
-          {{ form.id_document.label_tag }}
-        </label>
-        {{ form.id_document }}
-        <p class="text-xs text-gray-500">{{ form.id_document.help_text }}</p>
-        {{ form.id_document.errors }}
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700">
-          {{ form.selfie.label_tag }}
-        </label>
-        {{ form.selfie }}
-        <p class="text-xs text-gray-500">{{ form.selfie.help_text }}</p>
-        {{ form.selfie.errors }}
-      </div>
-
-      <div>
-        <button type="submit"
-                class="w-full py-3 rounded-full bg-black text-white font-medium hover:bg-gray-800">
-          {% trans "Submit KYC Documents" %}
+      {{ form.as_p }}
+      <div class="mt-4 text-right">
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">
+          {% if step == 6 %}{% trans "Finish" %}{% else %}{% trans "Continue" %}{% endif %}
         </button>
       </div>
     </form>
-
   </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const items = document.querySelectorAll('#wizard-steps li');
+  items.forEach((li, idx) => {
+    if (idx + 1 === {{ step }}) {
+      li.classList.add('font-bold');
+    }
+  });
+});
+</script>
 {% endblock %}
