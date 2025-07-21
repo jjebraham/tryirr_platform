@@ -43,5 +43,8 @@ def kyc(request):
             return redirect("core:dashboard")
     else:
         form = KYCForm(instance=user)
-    return render(request, "core/kyc.html", {"form": form})
+    return render(request, "core/kyc.html", {
+        "form": form,
+        "current_level": user.kyc_level,
+    })
 
