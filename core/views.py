@@ -47,6 +47,12 @@ def kyc(request):
     return render(request, "core/kyc.html", {"form": form})
 
 
+@login_required
+def verification(request):
+    """Alias for the KYC view so /verification/ stays functional."""
+    return kyc(request)
+
+
 def rates_api(request):
     """Return exchange rates as JSON for the homepage table."""
     data = fetch_all_rates()
