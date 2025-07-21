@@ -4,7 +4,8 @@ from decimal import Decimal
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import KYCForm, ConversionForm
-from .services.rates import fetch_try_irr_rates
+from .services.rates import fetch_try_irr_rates, fetch_all_rates
+from django.http import JsonResponse
 
 def home(request):
     return render(request, "core/index.html")
@@ -44,4 +45,18 @@ def kyc(request):
     else:
         form = KYCForm(instance=user)
     return render(request, "core/kyc.html", {"form": form})
+
+
+@login_required
+def verification(request):
+    """Alias for the KYC view so /verification/ stays functional."""
+    return kyc(request)
+
+
+def rates_api(request):
+    """Return exchange rates as JSON for the homepage table."""
+    data = fetch_all_rates()
+    if not data:
+        return JsonResponse({"error": "unavailable"}, status=503)
+    return JsonResponse(data)
 
