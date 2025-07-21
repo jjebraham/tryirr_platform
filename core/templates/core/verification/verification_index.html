@@ -7,10 +7,17 @@
     <ul class="space-y-2">
       {% for step in steps %}
         {% with level=forloop.counter0 %}
-        <li class="flex items-center space-x-2 {% if level < user.kyc_level %}text-green-600{% elif level+1 == step %}font-semibold{% else %}text-gray-400{% endif %}">
+        <li class="flex items-center space-x-2 
+            {% if level < user.kyc_level %}
+              text-green-600
+            {% elif level|add:'1' == step %}
+              font-semibold
+            {% else %}
+              text-gray-400
+            {% endif %}">
           {% if level < user.kyc_level %}
             ✓
-          {% elif level+1 > step %}
+          {% elif level|add:'1' > step %}
             🔒
           {% endif %}
           <span>{{ step.label }}</span>
@@ -24,3 +31,4 @@
   </section>
 </div>
 {% endblock %}
+
