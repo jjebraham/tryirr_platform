@@ -12,5 +12,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     # KYC flow
     path('kyc/',  views.kyc,       name='kyc'),
+    # Verification center
+    path('verification/', views.VerificationView.as_view(), name='verification'),
 ]
 

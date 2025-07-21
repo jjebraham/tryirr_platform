@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import KYCForm, ConversionForm
 from .services.rates import fetch_try_irr_rates
+from django.views.generic import TemplateView
 
 def home(request):
     return render(request, "core/index.html")
@@ -44,4 +45,8 @@ def kyc(request):
     else:
         form = KYCForm(instance=user)
     return render(request, "core/kyc.html", {"form": form})
+
+
+class VerificationView(TemplateView):
+    template_name = "core/verification/verification_index.html"
 
