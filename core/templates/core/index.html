@@ -12,6 +12,10 @@
            class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
           {% trans "Go to Dashboard" %}
         </a>
+        <a href="{% url 'core:kyc' %}"
+           class="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">
+          {% trans "Verify Account" %}
+        </a>
       {% else %}
         <a href="{% url 'account_signup' %}"
            class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700">

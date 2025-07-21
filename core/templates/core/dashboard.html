@@ -11,6 +11,15 @@
     {% trans "Dashboard" %}
   </h1>
 
+  <div class="mb-6 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+    <p class="text-gray-700 dark:text-gray-300">
+      {% trans "Verification Level:" %} {{ request.user.kyc_level }}
+      {% if request.user.kyc_level < 1 %}
+        - <a href="{% url 'core:kyc' %}" class="text-blue-600 dark:text-blue-400 hover:underline">{% trans "Verify now" %}</a>
+      {% endif %}
+    </p>
+  </div>
+
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
     <!-- Exchange Rates Card -->
     <div class="card">
