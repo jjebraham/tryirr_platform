@@ -3,9 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-
   <title>{% block title %}TL/IRR Exchange{% endblock %}</title>
-  
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -80,13 +78,8 @@
 
   <!-- FOOTER -->
   <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-6 transition-all duration-300">
-<<<<<<< HEAD
     <div class="container mx-auto px-4 text-center text-gray-500 dark:text-gray-400">      
-      <p>&copy; {% now "Y" %} TRY-IRR Platform. All rights reserved.</p>
-=======
-    <div class="container mx-auto px-4 text-center text-gray-500 dark:text-gray-400">
       <p>&copy; {% now "Y" %} TL-IRR Platform. All rights reserved.</p>
->>>>>>> ea92f8e0143eb2747e7b006da7b2aa51638fdc04
     </div>
   </footer>
 
@@ -95,7 +88,7 @@
     function initTheme() {
       const savedTheme = localStorage.getItem('theme');
       const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; 
-      const shouldUseDark = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);
+      const shouldUseDark = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);   
       const html = document.documentElement;
       const icon = document.getElementById('theme-icon');
       if (shouldUseDark) {
