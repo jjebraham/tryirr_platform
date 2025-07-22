@@ -20,19 +20,19 @@ def home(request):
 
 @login_required
 def dashboard(request):
-    # fetch fresh TRY↔IRR rates
+    # fetch fresh TL↔IRR and USDT↔TL rates
     rates = fetch_try_irr_rates()
 
     # wire up the converter form
     form = ConversionForm(request.GET or None)
     conversion_result = None
-    if form.is_valid() and rates.TRY_IRR and rates.IRR_TRY:
+    if form.is_valid() and rates.TL_IRR and rates.IRR_TL:
         amt: Decimal = form.cleaned_data["amount"]
-        if form.cleaned_data["direction"] == "TRY_TO_IRR":
+        if form.cleaned_data["direction"] == "TL_TO_IRR":
             # convert the float rate into Decimal
-            rate = Decimal(str(rates.TRY_IRR))
+            rate = Decimal(str(rates.TL_IRR))
         else:
-            rate = Decimal(str(rates.IRR_TRY))
+            rate = Decimal(str(rates.IRR_TL))
         conversion_result = amt * rate
 
     return render(request, "core/dashboard.html", {
@@ -88,7 +88,12 @@ def kyc_wizard(request):
 
 def live_rates(request):
     rates = fetch_try_irr_rates()
-    return JsonResponse({"TRY_IRR": rates.TRY_IRR, "IRR_TRY": rates.IRR_TRY})
+    return JsonResponse({
+        "TL_IRR": rates.TL_IRR,
+        "IRR_TL": rates.IRR_TL,
+        "USDT_TL": rates.USDT_TL,
+        "TL_USDT": rates.TL_USDT,
+    })
 
 
 def updates(request):
