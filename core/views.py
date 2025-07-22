@@ -1,6 +1,7 @@
 from decimal import Decimal
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+
 from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -21,19 +22,32 @@ from .services.rates import fetch_try_irr_rates, fetch_all_rates
 from .services.verification import send_phone_code, send_email_code
 
 
+
 def home(request):
     return render(request, "core/index.html")
 
 
 @login_required
 def dashboard(request):
+<<<<<<< HEAD
+=======
+    # fetch fresh TL↔IRR and USDT↔TL rates
+>>>>>>> ea92f8e0143eb2747e7b006da7b2aa51638fdc04
     rates = fetch_try_irr_rates()
 
     form = ConversionForm(request.GET or None)
     conversion_result = None
-    if form.is_valid() and rates.TRY_IRR and rates.IRR_TRY:
+    if form.is_valid() and rates.TL_IRR and rates.IRR_TL:
         amt: Decimal = form.cleaned_data["amount"]
+<<<<<<< HEAD
         rate = Decimal(str(rates.TRY_IRR)) if form.cleaned_data["direction"] == "TRY_TO_IRR" else Decimal(str(rates.IRR_TRY))
+=======
+        if form.cleaned_data["direction"] == "TL_TO_IRR":
+            # convert the float rate into Decimal
+            rate = Decimal(str(rates.TL_IRR))
+        else:
+            rate = Decimal(str(rates.IRR_TL))
+>>>>>>> ea92f8e0143eb2747e7b006da7b2aa51638fdc04
         conversion_result = amt * rate
 
     return render(request, "core/dashboard.html", {
@@ -221,3 +235,49 @@ def rates_api(request):
         return JsonResponse({"error": "unavailable"}, status=503)
     return JsonResponse(data)
 
+
+@login_required
+def kyc_wizard(request):
+    step = int(request.GET.get("step", 1))
+    user = request.user
+
+    if step <= 1:
+        FormClass = KYCPhoneForm
+        next_step = 2
+    elif step == 2:
+        FormClass = KYCIdForm
+        next_step = 3
+    else:
+        FormClass = KYCSelfieForm
+        next_step = None
+
+    form = FormClass(request.POST or None, request.FILES or None, instance=user)
+    if form.is_valid():
+        form.save()
+        if next_step:
+            return redirect(f"{request.path}?step={next_step}")
+        else:
+            user.kyc_level = 1
+            user.save()
+            return redirect("core:dashboard")
+
+    return render(request, "core/kyc_wizard.html", {"form": form, "step": step})
+
+
+def live_rates(request):
+    rates = fetch_try_irr_rates()
+    return JsonResponse({
+        "TL_IRR": rates.TL_IRR,
+        "IRR_TL": rates.IRR_TL,
+        "USDT_TL": rates.USDT_TL,
+        "TL_USDT": rates.TL_USDT,
+    })
+
+
+def updates(request):
+    updates_file = Path(settings.BASE_DIR) / "UPDATES.md"
+    try:
+        content = updates_file.read_text()
+    except Exception:
+        content = "No updates available."
+    return render(request, "core/updates.html", {"content": content})
