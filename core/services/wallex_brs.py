@@ -105,8 +105,7 @@ def get_usdt_rate() -> Dict[str,int]:
 
 def get_lira_rate() -> Dict[str,int]:
     try:
-        base_rials = get_rate("try")
-        base_toman = base_rials / 10
+        base_toman = get_rate("try")
         return {
             "buy":  round_to_nearest_10(base_toman * 1.02),
             "sell": round_to_nearest_10(base_toman * 0.97),
