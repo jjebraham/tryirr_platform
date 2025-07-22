@@ -36,3 +36,21 @@ class ConversionForm(forms.Form):
         )
     )
 
+
+class KYCPhoneForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ["phone_number"]
+        widgets = {
+            "phone_number": forms.TextInput(attrs={"class": "border rounded p-2"}),
+        }
+
+class KYCIdForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ["id_document"]
+
+class KYCSelfieForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ["selfie"]

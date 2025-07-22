@@ -15,7 +15,7 @@
     <p class="text-gray-700 dark:text-gray-300">
       {% trans "Verification Level:" %} {{ request.user.kyc_level }}
       {% if request.user.kyc_level < 1 %}
-        - <a href="{% url 'core:kyc' %}" class="text-blue-600 dark:text-blue-400 hover:underline">{% trans "Verify now" %}</a>
+        - <a href="{% url 'core:kyc_wizard' %}" class="text-blue-600 dark:text-blue-400 hover:underline">{% trans "Verify now" %}</a>
       {% endif %}
     </p>
   </div>
@@ -28,22 +28,48 @@
           {% trans "Exchange Rates" %}
         </h2>
       </div>
-      <div class="p-4 space-y-2">
-        {% if rates.TRY_IRR %}
-          <div class="flex justify-between text-gray-700 dark:text-gray-300">
-            <span>1 TRY →</span>
-            <span>{{ rates.TRY_IRR|floatformat:2 }} IRR</span>
-          </div>
-          <div class="flex justify-between text-gray-700 dark:text-gray-300">
-            <span>1 IRR →</span>
-            <span>{{ rates.IRR_TRY|floatformat:6 }} TRY</span>
-          </div>
-        {% else %}
-          <p class="text-red-500">
-            {% trans "Unable to fetch live rates right now." %}
-          </p>
-        {% endif %}
+      <div class="p-4">
+        <table id="live-rates-table" class="w-full text-sm">
+          <thead>
+            <tr>
+              <th class="text-left">Pair</th>
+              <th class="text-right">Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if rates.TRY_IRR %}
+            <tr>
+              <td>1 TRY → IRR</td>
+              <td class="text-right" id="rate-try-irr">{{ rates.TRY_IRR|floatformat:2 }}</td>
+            </tr>
+            <tr>
+              <td>1 IRR → TRY</td>
+              <td class="text-right" id="rate-irr-try">{{ rates.IRR_TRY|floatformat:6 }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="2" class="text-center text-red-500">{% trans "Unable to fetch live rates right now." %}</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
       </div>
+      <script>
+        async function fetchRates() {
+          try {
+            const resp = await fetch("{% url 'core:live_rates' %}");
+            if (!resp.ok) return;
+            const data = await resp.json();
+            if (data.TRY_IRR !== null) {
+              document.getElementById("rate-try-irr").textContent = Number(data.TRY_IRR).toFixed(2);
+              document.getElementById("rate-irr-try").textContent = Number(data.IRR_TRY).toFixed(6);
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        }
+        setInterval(fetchRates, 10000);
+      </script>
     </div>
 
     <!-- Your Balances Card -->
