@@ -1,0 +1,16 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Verification Center" %}{% endblock %}
+
+{% block content %}
+  <h1 class="text-3xl font-bold mb-4">{% trans "Verification Center" %}</h1>
+  <p class="mb-4">{% trans "Your current verification level is" %} {{ kyc_level }}.</p>
+  <ul class="list-disc ml-5 space-y-2">
+    {% for step in steps %}
+      <li>
+        Level {{ forloop.counter }} - {{ step }}{% if kyc_level >= forloop.counter %} ✅{% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

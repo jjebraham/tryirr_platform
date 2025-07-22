@@ -1,0 +1,1 @@
+*/1 * * * * cd /path/to/tryirr_platform && /usr/bin/python manage.py auto_update >> auto_update.log 2>&1
