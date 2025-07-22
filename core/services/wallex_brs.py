@@ -105,7 +105,9 @@ def get_usdt_rate() -> Dict[str,int]:
 
 def get_lira_rate() -> Dict[str, float]:
     try:
+
         base_irr = get_rate("try")
+
         return {
             "buy":  round(base_irr * 1.02, 2),
             "sell": round(base_irr * 0.97, 2),
