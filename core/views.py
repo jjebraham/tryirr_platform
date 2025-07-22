@@ -3,6 +3,9 @@
 from decimal import Decimal
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import TemplateView
+from django.conf import settings
 from .forms import KYCForm, ConversionForm
 from .services.rates import fetch_try_irr_rates
 
@@ -47,4 +50,36 @@ def kyc(request):
         "form": form,
         "current_level": user.kyc_level,
     })
+
+
+class VerificationIndexView(LoginRequiredMixin, TemplateView):
+    template_name = "core/verification/verification_index.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["steps"] = [
+            "Submit documents",
+            "Manual review",
+            "Advanced checks",
+        ]
+        context["kyc_level"] = self.request.user.kyc_level
+        return context
+
+
+class UpdatesView(UserPassesTestMixin, TemplateView):
+    template_name = "core/updates.html"
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_staff
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        log_path = settings.BASE_DIR / "auto_update.log"
+        if log_path.exists():
+            with open(log_path) as f:
+                lines = f.readlines()
+            context["log"] = lines[-1] if lines else ""
+        else:
+            context["log"] = "No updates yet."
+        return context
 
