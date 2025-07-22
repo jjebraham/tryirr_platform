@@ -37,14 +37,22 @@
             </tr>
           </thead>
           <tbody>
-            {% if rates.TRY_IRR %}
+            {% if rates.TL_IRR %}
             <tr>
-              <td>1 TRY → IRR</td>
-              <td class="text-right" id="rate-try-irr">{{ rates.TRY_IRR|floatformat:2 }}</td>
+              <td>1 TL → IRR</td>
+              <td class="text-right" id="rate-tl-irr">{{ rates.TL_IRR|floatformat:2 }}</td>
             </tr>
             <tr>
-              <td>1 IRR → TRY</td>
-              <td class="text-right" id="rate-irr-try">{{ rates.IRR_TRY|floatformat:6 }}</td>
+              <td>1 IRR → TL</td>
+              <td class="text-right" id="rate-irr-tl">{{ rates.IRR_TL|floatformat:6 }}</td>
+            </tr>
+            <tr>
+              <td>1 USDT → TL</td>
+              <td class="text-right" id="rate-usdt-tl">{{ rates.USDT_TL|floatformat:2 }}</td>
+            </tr>
+            <tr>
+              <td>1 TL → USDT</td>
+              <td class="text-right" id="rate-tl-usdt">{{ rates.TL_USDT|floatformat:4 }}</td>
             </tr>
             {% else %}
             <tr>
@@ -60,9 +68,11 @@
             const resp = await fetch("{% url 'core:live_rates' %}");
             if (!resp.ok) return;
             const data = await resp.json();
-            if (data.TRY_IRR !== null) {
-              document.getElementById("rate-try-irr").textContent = Number(data.TRY_IRR).toFixed(2);
-              document.getElementById("rate-irr-try").textContent = Number(data.IRR_TRY).toFixed(6);
+            if (data.TL_IRR !== null) {
+              document.getElementById("rate-tl-irr").textContent = Number(data.TL_IRR).toFixed(2);
+              document.getElementById("rate-irr-tl").textContent = Number(data.IRR_TL).toFixed(6);
+              document.getElementById("rate-usdt-tl").textContent = Number(data.USDT_TL).toFixed(2);
+              document.getElementById("rate-tl-usdt").textContent = Number(data.TL_USDT).toFixed(4);
             }
           } catch (e) {
             console.error(e);

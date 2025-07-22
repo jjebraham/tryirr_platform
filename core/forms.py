@@ -19,8 +19,8 @@ class KYCForm(forms.ModelForm):
 
 class ConversionForm(forms.Form):
     CHOICES = [
-        ("TRY_TO_IRR", _("TRY → IRR")),
-        ("IRR_TO_TRY", _("IRR → TRY")),
+        ("TL_TO_IRR", _("TL → IRR")),
+        ("IRR_TO_TL", _("IRR → TL")),
     ]
     direction = forms.ChoiceField(
         label=_("Convert"),
