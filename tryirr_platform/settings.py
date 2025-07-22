@@ -137,3 +137,9 @@ SOCIALACCOUNT_PROVIDERS = {
 # ─── EMAIL (dev) ────────────────────────────────────────────────────────────────
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
+# Instructions displayed during the final KYC step.
+DEPOSIT_INSTRUCTIONS = (
+    "Please transfer the required guarantee deposit to our bank account and "
+    "upload proof of payment below."
+)
+
