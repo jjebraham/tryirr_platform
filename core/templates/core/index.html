@@ -13,12 +13,12 @@
           {% trans "Go to Dashboard" %}
         </a>
         <a href="{% url 'core:kyc' %}"
-           class="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">
+           class="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">      
           {% trans "Verify Account" %}
         </a>
       {% else %}
         <a href="{% url 'account_signup' %}"
-           class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700">
+           class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700">        
           {% trans "Sign Up" %}
         </a>
         <a href="{% url 'account_login' %}"
@@ -26,7 +26,7 @@
           {% trans "Log In" %}
         </a>
         <a href="{% url 'core:kyc' %}"
-           class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+           class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700">      
           {% trans "Verification Center" %}
         </a>
       {% endif %}
@@ -91,8 +91,8 @@
         fetchRates();
         remaining = COUNTDOWN_SECS;
       }
-      const m = String(Math.floor(remaining/60)).padStart(2,'0');
-      const s = String(remaining%60).padStart(2,'0');
+      const m = String(Math.floor(remaining / 60)).padStart(2, '0');
+      const s = String(remaining % 60).padStart(2, '0');
       document.getElementById('countdown').textContent = m + ':' + s;
     }
 
