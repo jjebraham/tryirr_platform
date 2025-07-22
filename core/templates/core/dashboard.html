@@ -20,7 +20,7 @@
     <p class="text-gray-700 dark:text-gray-300">
       {% trans "Verification Level:" %} {{ request.user.kyc_level }}
       {% if request.user.kyc_level < 1 %}
-        - <a href="{% url 'core:kyc_wizard' %}" class="text-blue-600 dark:text-blue-400 hover:underline">{% trans "Verify now" %}</a>
+        - <a href="{% url 'core:kyc' %}" class="text-blue-600 dark:text-blue-400 hover:underline">{% trans "Verify now" %}</a>
       {% endif %}
     </p>
   </div>
@@ -112,13 +112,13 @@
     <div class="p-4">
       <form method="get" class="flex flex-wrap items-end gap-4">
         <div class="flex-1 min-w-[120px]">
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">  
             {% trans "Convert:" %}
           </label>
           {{ conversion_form.direction }}
         </div>
         <div class="flex-1 min-w-[120px]">
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">  
             {% trans "Amount:" %}
           </label>
           {{ conversion_form.amount }}
@@ -131,7 +131,7 @@
         {% if conversion_result is not None %}
           <div class="w-full mt-4">
             <p class="text-lg font-medium text-gray-900 dark:text-gray-100">
-              {% trans "Result:" %} 
+              {% trans "Result:" %}
               {{ conversion_result|floatformat:2 }}
             </p>
           </div>

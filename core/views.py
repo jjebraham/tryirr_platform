@@ -1,8 +1,9 @@
 from decimal import Decimal
+from pathlib import Path
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views.generic.edit import FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
@@ -22,23 +23,19 @@ from .services.rates import fetch_try_irr_rates, fetch_all_rates
 from .services.verification import send_phone_code, send_email_code
 
 
-
 def home(request):
     return render(request, "core/index.html")
 
 
 @login_required
 def dashboard(request):
-
     rates = fetch_try_irr_rates()
 
     form = ConversionForm(request.GET or None)
     conversion_result = None
     if form.is_valid() and rates.TL_IRR and rates.IRR_TL:
         amt: Decimal = form.cleaned_data["amount"]
-
-        rate = Decimal(str(rates.TRY_IRR)) if form.cleaned_data["direction"] == "TRY_TO_IRR" else Decimal(str(rates.IRR_TRY))
-
+        rate = Decimal(str(rates.TL_IRR)) if form.cleaned_data["direction"] == "TL_TO_IRR" else Decimal(str(rates.IRR_TL))
         conversion_result = amt * rate
 
     return render(request, "core/dashboard.html", {
@@ -48,7 +45,7 @@ def dashboard(request):
     })
 
 
-# 🔄 KYC Wizard Implementation (PR-3)
+# 🔄 KYC Wizard Implementation
 class KYCStepMixin(LoginRequiredMixin, FormView):
     step = ""
     next_url_name = None
@@ -62,13 +59,13 @@ class KYCStepMixin(LoginRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["steps"] = self.get_step_statuses()
-        ctx["back_url"] = reverse(self.prev_url_name) if self.prev_url_name else None      
+        ctx["back_url"] = reverse(self.prev_url_name) if self.prev_url_name else None
         return ctx
 
     def get_step_statuses(self):
         u = self.request.user
         return [
-            {"label": "Personal info", "done": True, "current": self.step == "personal"},  
+            {"label": "Personal info", "done": True, "current": self.step == "personal"},
             {"label": "Phone verification", "done": u.phone_verified, "current": self.step == "phone"},
             {"label": "Email verification", "done": u.email_verified, "current": self.step == "email"},
             {"label": "ID & Selfie upload", "done": bool(u.id_document and u.selfie), "current": self.step == "identity"},
@@ -215,44 +212,14 @@ def kyc_start(request):
 
 @login_required
 def verification(request):
-    """Alias for the KYC view so /verification/ stays functional."""
     return kyc_start(request)
 
 
 def rates_api(request):
-    """Return exchange rates as JSON for the homepage table."""
     data = fetch_all_rates()
     if not data:
         return JsonResponse({"error": "unavailable"}, status=503)
     return JsonResponse(data)
-
-
-@login_required
-def kyc_wizard(request):
-    step = int(request.GET.get("step", 1))
-    user = request.user
-
-    if step <= 1:
-        FormClass = KYCPhoneForm
-        next_step = 2
-    elif step == 2:
-        FormClass = KYCIdForm
-        next_step = 3
-    else:
-        FormClass = KYCSelfieForm
-        next_step = None
-
-    form = FormClass(request.POST or None, request.FILES or None, instance=user)
-    if form.is_valid():
-        form.save()
-        if next_step:
-            return redirect(f"{request.path}?step={next_step}")
-        else:
-            user.kyc_level = 1
-            user.save()
-            return redirect("core:dashboard")
-
-    return render(request, "core/kyc_wizard.html", {"form": form, "step": step})
 
 
 def live_rates(request):
@@ -272,3 +239,4 @@ def updates(request):
     except Exception:
         content = "No updates available."
     return render(request, "core/updates.html", {"content": content})
+

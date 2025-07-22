@@ -4,7 +4,6 @@ from . import views
 app_name = 'core'
 
 urlpatterns = [
-    # Landing page
     path('', views.home, name='home'),
 
     # Post‑login dashboard
@@ -18,9 +17,10 @@ urlpatterns = [
     path('kyc/address/', views.ProofOfAddressView.as_view(),       name='kyc_address'),    
     path('kyc/deposit/', views.GuaranteeDepositView.as_view(),     name='kyc_deposit'),    
 
-    # ✅ Extra views
+    # ✅ Extra Views
     path('verification/', views.verification, name='verification'),
     path('rates/', views.rates_api, name='rates'),
-    path('updates/', views.updates, name='updates'),  # ✅ Added missing route
+    path('updates/', views.updates, name='updates'),
+    path('live-rates/', views.live_rates, name='live_rates'),
 ]
 
