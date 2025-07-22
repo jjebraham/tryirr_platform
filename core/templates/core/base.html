@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>{% block title %}TRY/IRR Exchange{% endblock %}</title>
-  
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -12,7 +12,7 @@
       darkMode: 'class'
     }
   </script>
-  
+
   {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-all duration-300">
@@ -24,20 +24,24 @@
          class="text-2xl font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-300">
         TRY/IRR Exchange
       </a>
-      
+
       <div class="flex items-center space-x-4">
         <!-- Theme toggle button -->
         <button onclick="toggleTheme()"
                 class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <span id="theme-icon" class="text-xl">🌙</span>
         </button>
-        
+
         <!-- Navigation -->
         <nav class="flex items-center space-x-2">
           {% if user.is_authenticated %}
             <a href="{% url 'core:dashboard' %}"
                class="px-3 py-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300">
               Dashboard
+            </a>
+            <a href="{% url 'core:verification' %}"
+               class="px-3 py-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300">
+              Verification
             </a>
             <a href="{% url 'account_logout' %}"
                class="px-3 py-2 text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300">
@@ -57,7 +61,7 @@
       </div>
     </div>
   </header>
-  
+
   <!-- MAIN CONTENT -->
   <main class="flex-grow container mx-auto px-4 py-8">
     {% block content %}
@@ -67,83 +71,56 @@
     </div>
     {% endblock %}
   </main>
-  
+
   <!-- FOOTER -->
   <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-6 transition-all duration-300">
-    <div class="container mx-auto px-4 text-center text-gray-500 dark:text-gray-400">
+    <div class="container mx-auto px-4 text-center text-gray-500 dark:text-gray-400">      
       <p>&copy; {% now "Y" %} TRY-IRR Platform. All rights reserved.</p>
     </div>
   </footer>
 
   <!-- DARK MODE SCRIPT -->
   <script>
-    // Initialize theme on page load
     function initTheme() {
-      console.log('Initializing theme...');
-      
-      // Get saved theme from localStorage or use system preference
       const savedTheme = localStorage.getItem('theme');
-      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; 
       const shouldUseDark = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);
-      
-      console.log('Saved theme:', savedTheme);
-      console.log('System prefers dark:', systemPrefersDark);
-      console.log('Should use dark:', shouldUseDark);
-      
-      // Apply theme
       const html = document.documentElement;
       const icon = document.getElementById('theme-icon');
-      
       if (shouldUseDark) {
         html.classList.add('dark');
         if (icon) icon.textContent = '☀️';
-        console.log('Applied dark theme');
       } else {
         html.classList.remove('dark');
         if (icon) icon.textContent = '🌙';
-        console.log('Applied light theme');
       }
     }
-    
-    // Toggle theme function
+
     function toggleTheme() {
-      console.log('Toggle theme clicked');
-      
       const html = document.documentElement;
       const icon = document.getElementById('theme-icon');
       const isDark = html.classList.contains('dark');
-      
-      console.log('Current theme is dark:', isDark);
-      
       if (isDark) {
-        // Switch to light
         html.classList.remove('dark');
         localStorage.setItem('theme', 'light');
         if (icon) icon.textContent = '🌙';
-        console.log('Switched to light theme');
       } else {
-        // Switch to dark
         html.classList.add('dark');
         localStorage.setItem('theme', 'dark');
         if (icon) icon.textContent = '☀️';
-        console.log('Switched to dark theme');
       }
     }
-    
-    // Initialize when DOM is ready
+
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initTheme);
     } else {
       initTheme();
     }
-    
-    // Listen for system theme changes
+
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
       if (!localStorage.getItem('theme')) {
-        // Only update if user hasn't set a preference
         const html = document.documentElement;
         const icon = document.getElementById('theme-icon');
-        
         if (e.matches) {
           html.classList.add('dark');
           if (icon) icon.textContent = '☀️';
@@ -156,3 +133,4 @@
   </script>
 </body>
 </html>
+
