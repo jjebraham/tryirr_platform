@@ -10,6 +10,7 @@ urlpatterns = [
     # Post‑login dashboard
     path('dashboard/', views.dashboard, name='dashboard'),
 
+
     # ✅ KYC Wizard Views (from HEAD)
     path('kyc/', views.kyc_start, name='kyc'),
     path('kyc/phone/',   views.PhoneVerificationView.as_view(),    name='kyc_phone'),      
@@ -21,5 +22,6 @@ urlpatterns = [
     # ✅ Extra views from pr-5
     path('verification/', views.verification, name='verification'),
     path('rates/', views.rates_api, name='rates'),
+
 ]
 
