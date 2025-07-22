@@ -15,7 +15,7 @@ WALLEX_API_KEY  = "15064|7tVDd4NDBYmATAe4lWTUQSTzj0v7ceTELEv6u6zG"
 WALLEX_BASE_URL = "https://api.wallex.ir/v1"
 
 # ─── FALLBACK & MAPPINGS ─────────────────────────────────────────────────────────
-FALLBACK_USDT = {"buy": 82000, "sell": 79000}
+FALLBACK_USDT = {"buy": 8800, "sell": 8450}
 FALLBACK_VALUES = {
     "gold-miskal": 28000000,
     "coin-emami": 72000000,
@@ -26,7 +26,7 @@ FALLBACK_VALUES = {
     "usd": 80000,
     "gbp": 107000,
     "euro": 91000,
-    "try": 2100,
+    "try": 2137,
 }
 BRS_API_MAPPING = {
     "gold-miskal":   "IR_GOLD_MELTED",
@@ -103,19 +103,18 @@ def get_usdt_rate() -> Dict[str,int]:
     # --- Final fallback: static
     return FALLBACK_USDT
 
-def get_lira_rate() -> Dict[str,int]:
+def get_lira_rate() -> Dict[str, float]:
     try:
-        base_rials = get_rate("try")
-        base_toman = base_rials / 10
+        base_irr = get_rate("try")
         return {
-            "buy":  round_to_nearest_10(base_toman * 1.02),
-            "sell": round_to_nearest_10(base_toman * 0.97),
+            "buy":  round(base_irr * 1.02, 2),
+            "sell": round(base_irr * 0.97, 2),
         }
     except Exception as e:
-        logger.error("Could not fetch TRY rate: %s", e)
+        logger.error("Could not fetch TL rate: %s", e)
         fb = FALLBACK_VALUES["try"]
         return {
-            "buy":  round_to_nearest_10(fb * 1.02),
-            "sell": round_to_nearest_10(fb * 0.97),
+            "buy":  round(fb * 1.02, 2),
+            "sell": round(fb * 0.97, 2),
         }
 
