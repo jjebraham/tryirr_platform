@@ -1,0 +1,24 @@
+{% extends 'core/kyc_wizard/base.html' %}
+
+{% block step_content %}
+<h2 class="text-2xl font-bold mb-4">Phone Verification</h2>
+<form method="post" class="space-y-4">
+  {% csrf_token %}
+  <div>
+    <label class="block mb-1">Phone number</label>
+    {{ form.phone_number }}
+  </div>
+  {% if request.session.phone_sent %}
+  <div>
+    <label class="block mb-1">Verification code</label>
+    {{ form.verification_code }}
+  </div>
+  {% endif %}
+  <div class="flex gap-2">
+    <button name="action" value="send" class="px-4 py-2 bg-blue-600 text-white rounded">Send code</button>
+    {% if request.session.phone_sent %}
+      <button name="action" value="verify" class="px-4 py-2 bg-blue-600 text-white rounded">Verify</button>
+    {% endif %}
+  </div>
+</form>
+{% endblock %}

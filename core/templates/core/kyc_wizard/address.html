@@ -1,0 +1,32 @@
+{% extends 'core/kyc_wizard/base.html' %}
+
+{% block step_content %}
+<h2 class="text-2xl font-bold mb-4">Proof of Address</h2>
+<form method="post" enctype="multipart/form-data" class="space-y-4">
+  {% csrf_token %}
+  <div>
+    <label class="block mb-1">Country</label>
+    {{ form.address_country }}
+  </div>
+  <div>
+    <label class="block mb-1">City</label>
+    {{ form.address_city }}
+  </div>
+  <div>
+    <label class="block mb-1">ZIP Code</label>
+    {{ form.address_zip }}
+  </div>
+  <div>
+    <label class="block mb-1">Street Address</label>
+    {{ form.address_street }}
+  </div>
+  <div>
+    <label class="block mb-1">Proof Document</label>
+    {{ form.address_document }}
+  </div>
+  <div class="flex justify-between">
+    <a href="{{ back_url }}" class="px-4 py-2 bg-gray-500 text-white rounded">Back</a>
+    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Next</button>
+  </div>
+</form>
+{% endblock %}
