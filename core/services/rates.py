@@ -10,19 +10,30 @@ def fetch_try_irr_rates():
     usdt = get_usdt_rate()
     lira = get_lira_rate()
     if not usdt or not lira:
-        logger.warning("USDT or TRY feed unavailable")
-        return SimpleNamespace(TRY_IRR=None, IRR_TRY=None)
+        logger.warning("USDT or TL feed unavailable")
+        return SimpleNamespace(TL_IRR=None, IRR_TL=None,
+                               USDT_TL=None, TL_USDT=None)
 
     tmn_per_usdt = (usdt["buy"] + usdt["sell"]) / 2
-    tmn_per_try  = (lira["buy"] + lira["sell"]) / 2
-
-    irr_per_try = tmn_per_try * 10
+    irr_per_usdt = tmn_per_usdt * 10
+    irr_per_tl   = (lira["buy"] + lira["sell"]) / 2
     try:
-        try_per_irr = 1 / irr_per_try
+        tl_per_irr = 1 / irr_per_tl
     except Exception:
-        try_per_irr = None
+        tl_per_irr = None
 
-    return SimpleNamespace(TRY_IRR=irr_per_try, IRR_TRY=try_per_irr)
+    tl_per_usdt = irr_per_usdt / irr_per_tl
+    try:
+        usdt_per_tl = 1 / tl_per_usdt
+    except Exception:
+        usdt_per_tl = None
+
+    return SimpleNamespace(
+        TL_IRR=irr_per_tl,
+        IRR_TL=tl_per_irr,
+        USDT_TL=tl_per_usdt,
+        TL_USDT=usdt_per_tl,
+    )
 
 
 def fetch_all_rates():
