@@ -1,145 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-
-
-  <title>{% block title %}TL/IRR Exchange{% endblock %}</title>
-  
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TRY Exchange</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
   <script>
-    tailwind.config = {
-      darkMode: 'class'
+    function toggleTheme() {
+      const html = document.documentElement;
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+      document.getElementById('theme-icon').textContent = html.classList.contains('dark') ? '☀️' : '��';
     }
+
+    window.onload = () => {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.getElementById('theme-icon').textContent = '🌙';
+      } else {
+        document.documentElement.classList.add('dark');
+        document.getElementById('theme-icon').textContent = '☀️';
+      }
+    };
   </script>
-
-  {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-all duration-300">
-  <!-- HEADER -->
-  <header class="bg-white dark:bg-gray-800 shadow-md transition-all duration-300">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-      <!-- Logo -->
-      <a href="{% url 'core:home' %}"
-         class="text-2xl font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-300">
-        TL/IRR Exchange
-      </a>
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+  <header class="flex justify-between items-center p-4 shadow-md dark:shadow-none">
+    <h1 class="text-2xl font-bold">TRY Exchange</h1>
+    <div class="flex items-center space-x-4">
+      <!-- Theme toggle button -->
+      <button onclick="toggleTheme()"
+              class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <span id="theme-icon" class="text-xl">🌙</span>
+      </button>
 
-      <div class="flex items-center space-x-4">
-        <!-- Theme toggle button -->
-        <button onclick="toggleTheme()"
-                class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <span id="theme-icon" class="text-xl">🌙</span>
-        </button>
+      <!-- Navigation -->
+      <nav class="flex items-center space-x-2">
+        {% comment %} Comment this if no updates view exists {% endcomment %}
+        {# <a href="{% url 'core:updates' %}" class="px-3 py-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300">Updates</a> #}
 
-        <!-- Navigation -->
-        <nav class="flex items-center space-x-2">
-          <a href="{% url 'core:updates' %}"
-             class="px-3 py-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300">
-            Updates
-          </a>
-          {% if user.is_authenticated %}
-            <a href="{% url 'core:dashboard' %}"
-               class="px-3 py-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300">
-              Dashboard
-            </a>
-            <a href="{% url 'core:verification' %}"
-               class="px-3 py-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300">
-              Verification
-            </a>
-            <a href="{% url 'account_logout' %}"
-               class="px-3 py-2 text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300">
-              Logout
-            </a>
-          {% else %}
-            <a href="{% url 'account_login' %}"
-               class="px-3 py-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300">
-              Login
-            </a>
-            <a href="{% url 'account_signup' %}"
-               class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-300 shadow-md hover:shadow-lg">
-              Register
-            </a>
-          {% endif %}
-        </nav>
-      </div>
+        {% if user.is_authenticated %}
+          <a href="{% url 'core:dashboard' %}" class="px-3 py-2 hover:text-blue-600 dark:hover:text-blue-400">Dashboard</a>
+          <a href="{% url 'core:verification' %}" class="px-3 py-2 hover:text-blue-600 dark:hover:text-blue-400">Verification</a>
+          <a href="{% url 'account_logout' %}" class="px-3 py-2 hover:text-red-600 dark:hover:text-red-400">Logout</a>
+        {% else %}
+          <a href="{% url 'account_login' %}" class="px-3 py-2 hover:text-blue-600 dark:hover:text-blue-400">Login</a>
+          <a href="{% url 'account_signup' %}" class="px-3 py-2 hover:text-blue-600 dark:hover:text-blue-400">Register</a>
+        {% endif %}
+      </nav>
     </div>
   </header>
 
-  <!-- MAIN CONTENT -->
-  <main class="flex-grow container mx-auto px-4 py-8">
+  <main class="p-6">
     {% block content %}
-    <div class="text-center py-12">
-      <h1 class="text-4xl font-bold mb-4">Welcome to TL/IRR Exchange</h1>
-      <p class="text-xl text-gray-600 dark:text-gray-300">Your currency exchange platform</p>
-    </div>
     {% endblock %}
   </main>
-
-  <!-- FOOTER -->
-  <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-6 transition-all duration-300">
-
-    <div class="container mx-auto px-4 text-center text-gray-500 dark:text-gray-400">
-      <p>&copy; {% now "Y" %} TL-IRR Platform. All rights reserved.</p>
-
-    </div>
-  </footer>
-
-  <!-- DARK MODE SCRIPT -->
-  <script>
-    function initTheme() {
-      const savedTheme = localStorage.getItem('theme');
-      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; 
-      const shouldUseDark = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);
-      const html = document.documentElement;
-      const icon = document.getElementById('theme-icon');
-      if (shouldUseDark) {
-        html.classList.add('dark');
-        if (icon) icon.textContent = '☀️';
-      } else {
-        html.classList.remove('dark');
-        if (icon) icon.textContent = '🌙';
-      }
-    }
-
-    function toggleTheme() {
-      const html = document.documentElement;
-      const icon = document.getElementById('theme-icon');
-      const isDark = html.classList.contains('dark');
-      if (isDark) {
-        html.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
-        if (icon) icon.textContent = '🌙';
-      } else {
-        html.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
-        if (icon) icon.textContent = '☀️';
-      }
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initTheme);
-    } else {
-      initTheme();
-    }
-
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
-      if (!localStorage.getItem('theme')) {
-        const html = document.documentElement;
-        const icon = document.getElementById('theme-icon');
-        if (e.matches) {
-          html.classList.add('dark');
-          if (icon) icon.textContent = '☀️';
-        } else {
-          html.classList.remove('dark');
-          if (icon) icon.textContent = '🌙';
-        }
-      }
-    });
-  </script>
 </body>
 </html>
 
