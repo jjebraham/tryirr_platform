@@ -6,12 +6,11 @@ app_name = 'core'
 urlpatterns = [
     # Landing page
     path('', views.home, name='home'),
-    
+
     # Post‑login dashboard
     path('dashboard/', views.dashboard, name='dashboard'),
 
-
-    # ✅ KYC Wizard Views (from HEAD)
+    # ✅ KYC Wizard Views
     path('kyc/', views.kyc_start, name='kyc'),
     path('kyc/phone/',   views.PhoneVerificationView.as_view(),    name='kyc_phone'),      
     path('kyc/email/',   views.EmailVerificationView.as_view(),    name='kyc_email'),      
@@ -19,9 +18,9 @@ urlpatterns = [
     path('kyc/address/', views.ProofOfAddressView.as_view(),       name='kyc_address'),    
     path('kyc/deposit/', views.GuaranteeDepositView.as_view(),     name='kyc_deposit'),    
 
-    # ✅ Extra views from pr-5
+    # ✅ Extra views
     path('verification/', views.verification, name='verification'),
     path('rates/', views.rates_api, name='rates'),
-
+    path('updates/', views.updates, name='updates'),  # ✅ Added missing route
 ]
 
