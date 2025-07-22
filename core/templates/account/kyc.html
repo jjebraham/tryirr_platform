@@ -1,0 +1,41 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "KYC Verification" %}{% endblock %}
+
+{% block content %}
+  <div class="max-w-xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">{% trans "Verify Your Identity" %}</h1>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+      {% csrf_token %}
+      <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 shadow">
+        <div class="mb-4">
+          <label for="id_document" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            {% trans "Government‑issued ID Document" %}
+          </label>
+          {{ form.id_document }}
+          {% if form.id_document.errors %}
+            <p class="text-red-500 text-sm">{{ form.id_document.errors.0 }}</p>
+          {% endif %}
+        </div>
+        <div>
+          <label for="selfie" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            {% trans "Selfie with ID (for facial matching)" %}
+          </label>
+          {{ form.selfie }}
+          {% if form.selfie.errors %}
+            <p class="text-red-500 text-sm">{{ form.selfie.errors.0 }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="text-right">
+        <button type="submit"
+                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200">
+          {% trans "Submit for Verification" %}
+        </button>
+      </div>
+    </form>
+  </div>
+{% endblock %}
