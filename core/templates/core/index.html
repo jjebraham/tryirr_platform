@@ -68,12 +68,12 @@
         const body = document.getElementById('rates-body');
         body.innerHTML = '';
         const items = [
-          ['{% trans "Buy TRY from us" %}', data.buy_lira + ' تومان'],
-          ['{% trans "Sell TRY to us" %}', data.sell_lira + ' تومان'],
-          ['{% trans "Buy USDT from us" %}', data.buy_usdt + ' تومان'],
-          ['{% trans "Sell USDT to us" %}', data.sell_usdt + ' تومان'],
-          ['{% trans "TRY to USDT" %}', data.try_to_usdt + ' TRY'],
-          ['{% trans "USDT to TRY" %}', data.usdt_to_try + ' TRY'],
+          ['{% trans "Buy TL from us" %}', data.buy_lira + ' Toman'],
+          ['{% trans "Sell TL to us" %}', data.sell_lira + ' Toman'],
+          ['{% trans "Buy USDT from us" %}', data.buy_usdt + ' Toman'],
+          ['{% trans "Sell USDT to us" %}', data.sell_usdt + ' Toman'],
+          ['{% trans "TL to USDT" %}', data.try_to_usdt + ' TL'],
+          ['{% trans "USDT to TL" %}', data.usdt_to_try + ' TL'],
         ];
         for (const [op, rate] of items) {
           const tr = document.createElement('tr');
