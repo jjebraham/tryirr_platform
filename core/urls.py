@@ -8,6 +8,7 @@ urlpatterns = [
 
     # Post‑login dashboard
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('wallet/', views.wallet, name='wallet'),
 
     # ✅ KYC Wizard Views
     path('kyc/', views.kyc_start, name='kyc'),

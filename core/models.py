@@ -65,6 +65,11 @@ class CustomUser(AbstractUser):
         blank=True,
     )
 
+    # Wallet balances
+    balance_tl = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    balance_irr = models.DecimalField(max_digits=14, decimal_places=0, default=0)
+    balance_usdt = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
     # Override groups/permissions to avoid clashes:
     groups = models.ManyToManyField(
         Group, blank=True, related_name="customuser_set",
