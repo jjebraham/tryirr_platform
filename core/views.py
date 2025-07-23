@@ -21,6 +21,11 @@ from .forms import (
 )
 from .services.rates import fetch_try_irr_rates, fetch_all_rates
 from .services.verification import send_phone_code, send_email_code
+from .telegram_reporter import notify as telegram_notify
+
+# TODO: Implement email/phone verification pages
+# TODO: Add 2FA support
+# TODO: Require admin approval for large withdrawals
 
 
 def home(request):
@@ -43,6 +48,13 @@ def dashboard(request):
         "conversion_form": form,
         "conversion_result": conversion_result,
     })
+
+
+@login_required
+def wallet(request):
+    """Display user's wallet balances."""
+    telegram_notify("\ud83d\ude80 Wallet page accessed")
+    return render(request, "core/wallet.html")
 
 
 # 🔄 KYC Wizard Implementation

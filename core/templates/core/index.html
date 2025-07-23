@@ -1,12 +1,12 @@
 {% extends "core/base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Welcome" %} — TL/IRR Exchange{% endblock %}
+{% block title %}{% trans "Welcome" %} — Peerexo.com{% endblock %}
 
 {% block content %}
   <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100">
 
-    <h1 class="text-5xl font-bold mb-8">{% trans "TL/IRR Exchange" %}</h1>
+    <h1 class="text-5xl font-bold mb-8">Peerexo.com</h1>
     <div class="space-x-4">
 
       {% if user.is_authenticated %}
@@ -71,12 +71,12 @@
         const body = document.getElementById('rates-body');
         body.innerHTML = '';
         const items = [
-          ['{% trans "Buy TRY from us" %}', data.buy_lira + ' تومان'],
-          ['{% trans "Sell TRY to us" %}', data.sell_lira + ' تومان'],
+          ['{% trans "Buy TL from us" %}', data.buy_lira + ' تومان'],
+          ['{% trans "Sell TL to us" %}', data.sell_lira + ' تومان'],
           ['{% trans "Buy USDT from us" %}', data.buy_usdt + ' تومان'],
           ['{% trans "Sell USDT to us" %}', data.sell_usdt + ' تومان'],
-          ['{% trans "TRY to USDT" %}', data.try_to_usdt + ' TRY'],
-          ['{% trans "USDT to TRY" %}', data.usdt_to_try + ' TRY'],
+          ['{% trans "TL to USDT" %}', data.try_to_usdt + ' TL'],
+          ['{% trans "USDT to TL" %}', data.usdt_to_try + ' TL'],
         ];
         for (const [op, rate] of items) {
           const tr = document.createElement('tr');
