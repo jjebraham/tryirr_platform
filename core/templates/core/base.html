@@ -24,7 +24,10 @@
 
         {% if user.is_authenticated %}
           <a href="{% url 'core:dashboard' %}" class="px-3 py-2 hover:text-blue-600 dark:hover:text-blue-400">Dashboard</a>
-          <a href="{% url 'core:verification' %}" class="px-3 py-2 hover:text-blue-600 dark:hover:text-blue-400">Verification</a>
+          <a href="{% url 'core:offer_list' %}" class="px-3 py-2 hover:text-blue-600 dark:hover:text-blue-400">Offers</a>
+          <a href="{% url 'core:wallet' %}" class="px-3 py-2 hover:text-blue-600 dark:hover:text-blue-400">My Wallet</a>
+          <a href="{% url 'core:transactions' %}" class="px-3 py-2 hover:text-blue-600 dark:hover:text-blue-400">Transactions</a>
+          <a href="{% url 'core:verification' %}" class="px-3 py-2 hover:text-blue-600 dark:hover:text-blue-400">Verification Center</a>
           <a href="{% url 'account_logout' %}" class="px-3 py-2 hover:text-red-600 dark:hover:text-red-400">Logout</a>
         {% else %}
           <a href="{% url 'account_login' %}" class="px-3 py-2 hover:text-blue-600 dark:hover:text-blue-400">Login</a>

@@ -22,5 +22,14 @@ urlpatterns = [
     path('rates/', views.rates_api, name='rates'),
     path('updates/', views.updates, name='updates'),
     path('live-rates/', views.live_rates, name='live_rates'),
+
+    # Marketplace
+    path('offers/', views.OfferListView.as_view(), name='offer_list'),
+    path('offers/new/', views.OfferCreateView.as_view(), name='offer_create'),
+    path('offers/<int:pk>/', views.OfferDetailView.as_view(), name='offer_detail'),
+
+    path('trades/<int:pk>/', views.TradeDetailView.as_view(), name='trade_detail'),
+    path('wallet/', views.WalletView.as_view(), name='wallet'),
+    path('transactions/', views.TransactionListView.as_view(), name='transactions'),
 ]
 

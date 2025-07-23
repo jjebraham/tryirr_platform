@@ -78,3 +78,102 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return f"{self.username} ({self.phone_number})"
 
+
+class Wallet(models.Model):
+    """Simple user wallet to hold balances."""
+
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="wallet")
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
+    def __str__(self):
+        return f"Wallet of {self.user.username}: {self.balance}"
+
+
+class Offer(models.Model):
+    """P2P buy/sell offer."""
+
+    BUY = "buy"
+    SELL = "sell"
+    TYPES = [
+        (BUY, "Buy"),
+        (SELL, "Sell"),
+    ]
+
+    IRR_TL = "IRR/TL"
+    TL_IRR = "TL/IRR"
+    PAIRS = [
+        (IRR_TL, "IRR → TL"),
+        (TL_IRR, "TL → IRR"),
+    ]
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="offers")
+    type = models.CharField(max_length=4, choices=TYPES)
+    currency_pair = models.CharField(max_length=7, choices=PAIRS)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    rate = models.DecimalField(max_digits=12, decimal_places=4)
+    payment_methods = models.CharField(max_length=255)
+    active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} {self.type} {self.amount} {self.currency_pair}"
+
+
+class Trade(models.Model):
+    """Trade initiated from an offer between two users."""
+
+    PENDING = "pending"
+    FUNDED = "funded"
+    RELEASED = "released"
+    STATUS_CHOICES = [
+        (PENDING, "Pending"),
+        (FUNDED, "Funded"),
+        (RELEASED, "Released"),
+    ]
+
+    offer = models.ForeignKey(Offer, on_delete=models.CASCADE, related_name="trades")
+    buyer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="buy_trades")
+    seller = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="sell_trades")
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    rate = models.DecimalField(max_digits=12, decimal_places=4)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Trade #{self.pk} - {self.status}"
+
+
+class ChatMessage(models.Model):
+    """Chat messages exchanged within a trade."""
+
+    trade = models.ForeignKey(Trade, on_delete=models.CASCADE, related_name="messages")
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["timestamp"]
+
+    def __str__(self):
+        return f"Message by {self.sender} at {self.timestamp}"
+
+
+class WalletTransaction(models.Model):
+    """Record of wallet deposits and withdrawals."""
+
+    DEPOSIT = "deposit"
+    WITHDRAW = "withdraw"
+    TYPES = [
+        (DEPOSIT, "Deposit"),
+        (WITHDRAW, "Withdraw"),
+    ]
+
+    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, related_name="transactions")
+    tx_type = models.CharField(max_length=10, choices=TYPES)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.wallet.user} {self.tx_type} {self.amount}"
+

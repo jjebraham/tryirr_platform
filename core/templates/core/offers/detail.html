@@ -1,0 +1,17 @@
+{% extends "core/base.html" %}
+{% block title %}Offer #{{ offer.pk }}{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Offer Details</h1>
+<div class="mb-4 p-4 bg-white dark:bg-gray-800 rounded">
+  <p><strong>User:</strong> {{ offer.user }}</p>
+  <p><strong>Type:</strong> {{ offer.get_type_display }}</p>
+  <p><strong>Pair:</strong> {{ offer.get_currency_pair_display }}</p>
+  <p><strong>Amount:</strong> {{ offer.amount }}</p>
+  <p><strong>Rate:</strong> {{ offer.rate }}</p>
+  <p><strong>Payment:</strong> {{ offer.payment_methods }}</p>
+</div>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Take this offer</button>
+</form>
+{% endblock %}
