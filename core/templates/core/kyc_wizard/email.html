@@ -22,4 +22,9 @@
     {% endif %}
   </div>
 </form>
+<div class="flex justify-end mt-4">
+  {% if next_url %}
+    <a href="{{ next_url }}" class="px-4 py-2 bg-blue-600 text-white rounded">Next</a>
+  {% endif %}
+</div>
 {% endblock %}
