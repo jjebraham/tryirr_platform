@@ -30,3 +30,23 @@ Add the following line:
 
 This will log the output to `update_log.txt` and notify the configured Telegram
 channel whenever the repository updates and the app is restarted.
+
+## Email & SMS Configuration
+
+Set the following environment variables to enable email and phone verification:
+
+```
+SMTP_HOST=<your smtp host>
+SMTP_PORT=587
+SMTP_USER=<smtp username>
+SMTP_PASSWORD=<smtp password>
+SMTP_USE_TLS=true
+DEFAULT_FROM_EMAIL=noreply@peerexo.com
+
+TWILIO_ACCOUNT_SID=<twilio sid>
+TWILIO_AUTH_TOKEN=<twilio token>
+TWILIO_FROM_NUMBER=<twilio phone number>
+```
+
+When these values are provided the app will send verification codes via the configured providers instead of printing them to the console.
+

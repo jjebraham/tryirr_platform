@@ -33,6 +33,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sites",
 
+    # 2FA
+    "django_otp",
+    "django_otp.plugins.otp_totp",
+    "two_factor",
+
     # allauth
     "allauth",
     "allauth.account",
@@ -53,6 +58,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django_otp.middleware.OTPMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -134,12 +140,17 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-# ─── EMAIL (dev) ────────────────────────────────────────────────────────────────
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# --- EMAIL --------------------------------------------------------------------
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+EMAIL_HOST = os.getenv("SMTP_HOST", "localhost")
+EMAIL_PORT = int(os.getenv("SMTP_PORT", "587"))
+EMAIL_HOST_USER = os.getenv("SMTP_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("SMTP_PASSWORD", "")
+EMAIL_USE_TLS = os.getenv("SMTP_USE_TLS", "true").lower() in ("1", "true", "yes")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@peerexo.com")
 
 # Instructions displayed during the final KYC step.
 DEPOSIT_INSTRUCTIONS = (
     "Please transfer the required guarantee deposit to our bank account and "
     "upload proof of payment below."
 )
-

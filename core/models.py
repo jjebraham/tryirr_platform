@@ -6,6 +6,7 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
     phone_verified = models.BooleanField(default=False)
     email_verified = models.BooleanField(default=False)
+    two_factor_enabled = models.BooleanField(default=False)
     kyc_level = models.PositiveIntegerField(default=0)  # Level 0 = unverified
 
     # Personal info
