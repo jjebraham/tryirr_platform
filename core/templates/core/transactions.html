@@ -1,0 +1,36 @@
+{% extends "core/base.html" %}
+{% block title %}Transactions{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Transactions</h1>
+<table class="w-full text-sm">
+  <thead>
+    <tr class="bg-gray-100 dark:bg-gray-700">
+      <th class="px-2 py-1">Type</th>
+      <th class="px-2 py-1">Details</th>
+      <th class="px-2 py-1 text-right">Amount</th>
+      <th class="px-2 py-1 text-right">Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for tx in transactions %}
+      {% if tx.__class__.__name__ == 'Trade' %}
+        <tr class="border-b dark:border-gray-700">
+          <td class="px-2 py-1">Trade</td>
+          <td class="px-2 py-1">Trade #{{ tx.pk }}</td>
+          <td class="px-2 py-1 text-right">{{ tx.amount }}</td>
+          <td class="px-2 py-1 text-right">{{ tx.updated_at|date:"Y-m-d H:i" }}</td>
+        </tr>
+      {% else %}
+        <tr class="border-b dark:border-gray-700">
+          <td class="px-2 py-1">{{ tx.get_tx_type_display }}</td>
+          <td class="px-2 py-1">Wallet</td>
+          <td class="px-2 py-1 text-right">{{ tx.amount }}</td>
+          <td class="px-2 py-1 text-right">{{ tx.timestamp|date:"Y-m-d H:i" }}</td>
+        </tr>
+      {% endif %}
+    {% empty %}
+    <tr><td colspan="4" class="text-center py-4">No transactions.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

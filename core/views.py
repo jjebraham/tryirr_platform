@@ -4,10 +4,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
 from django.urls import reverse
+from django.views.generic import ListView, DetailView, CreateView
 from django.views.generic.edit import FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.conf import settings
+from django.db import models
 
 from .forms import (
     PersonalInfoForm,
@@ -18,7 +20,12 @@ from .forms import (
     ProofOfAddressForm,
     GuaranteeDepositForm,
     ConversionForm,
+    OfferForm,
+    ChatMessageForm,
+    DepositForm,
+    WithdrawForm,
 )
+from .models import Offer, Trade, ChatMessage, Wallet, WalletTransaction
 from .services.rates import fetch_try_irr_rates, fetch_all_rates
 from .services.verification import send_phone_code, send_email_code
 
@@ -239,4 +246,142 @@ def updates(request):
     except Exception:
         content = "No updates available."
     return render(request, "core/updates.html", {"content": content})
+
+
+# ─── Marketplace Views ────────────────────────────────────────────────────────
+
+
+class OfferListView(ListView):
+    model = Offer
+    template_name = "core/offers/list.html"
+    context_object_name = "offers"
+
+    def get_queryset(self):
+        qs = Offer.objects.filter(active=True)
+        pair = self.request.GET.get("pair")
+        min_amt = self.request.GET.get("min")
+        max_amt = self.request.GET.get("max")
+        if pair:
+            qs = qs.filter(currency_pair=pair)
+        if min_amt:
+            qs = qs.filter(amount__gte=min_amt)
+        if max_amt:
+            qs = qs.filter(amount__lte=max_amt)
+        return qs.order_by("-created_at")
+
+
+class OfferCreateView(LoginRequiredMixin, CreateView):
+    model = Offer
+    form_class = OfferForm
+    template_name = "core/offers/form.html"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("core:offer_detail", args=[self.object.pk])
+
+
+class OfferDetailView(LoginRequiredMixin, DetailView):
+    model = Offer
+    template_name = "core/offers/detail.html"
+    context_object_name = "offer"
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        trade = Trade.objects.create(
+            offer=self.object,
+            buyer=request.user if self.object.type == Offer.SELL else self.object.user,
+            seller=self.object.user if self.object.type == Offer.SELL else request.user,
+            amount=self.object.amount,
+            rate=self.object.rate,
+        )
+        return redirect("core:trade_detail", trade.pk)
+
+
+class TradeDetailView(LoginRequiredMixin, DetailView, FormView):
+    model = Trade
+    template_name = "core/trades/detail.html"
+    form_class = ChatMessageForm
+    context_object_name = "trade"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.pop("instance", None)
+        return kwargs
+
+    def get_queryset(self):
+        user = self.request.user
+        return Trade.objects.filter(buyer=user) | Trade.objects.filter(seller=user)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["messages"] = self.object.messages.all()
+        ctx["can_fund"] = self.object.status == Trade.PENDING and self.request.user == self.object.buyer
+        ctx["can_release"] = self.object.status == Trade.FUNDED and self.request.user == self.object.seller
+        return ctx
+
+    def form_valid(self, form):
+        trade = self.get_object()
+        if self.request.user not in [trade.buyer, trade.seller]:
+            return redirect("core:dashboard")
+        ChatMessage.objects.create(
+            trade=trade,
+            sender=self.request.user,
+            message=form.cleaned_data["message"],
+        )
+        return redirect("core:trade_detail", trade.pk)
+
+    def post(self, request, *args, **kwargs):
+        if "fund" in request.POST:
+            trade = self.get_object()
+            if trade.status == Trade.PENDING and request.user == trade.buyer:
+                trade.status = Trade.FUNDED
+                trade.save(update_fields=["status"])
+            return redirect("core:trade_detail", trade.pk)
+        if "release" in request.POST:
+            trade = self.get_object()
+            if trade.status == Trade.FUNDED and request.user == trade.seller:
+                trade.status = Trade.RELEASED
+                trade.save(update_fields=["status"])
+            return redirect("core:trade_detail", trade.pk)
+        return super().post(request, *args, **kwargs)
+
+
+class WalletView(LoginRequiredMixin, FormView):
+    template_name = "core/wallet.html"
+    form_class = DepositForm
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        wallet, _ = Wallet.objects.get_or_create(user=self.request.user)
+        ctx["wallet"] = wallet
+        ctx["withdraw_form"] = WithdrawForm()
+        return ctx
+
+    def form_valid(self, form):
+        wallet, _ = Wallet.objects.get_or_create(user=self.request.user)
+        if "deposit" in self.request.POST:
+            wallet.balance += form.cleaned_data["amount"]
+            wallet.save(update_fields=["balance"])
+            WalletTransaction.objects.create(wallet=wallet, tx_type=WalletTransaction.DEPOSIT, amount=form.cleaned_data["amount"])
+        elif "withdraw" in self.request.POST:
+            withdraw_form = WithdrawForm(self.request.POST)
+            if withdraw_form.is_valid() and wallet.balance >= withdraw_form.cleaned_data["amount"]:
+                wallet.balance -= withdraw_form.cleaned_data["amount"]
+                wallet.save(update_fields=["balance"])
+                WalletTransaction.objects.create(wallet=wallet, tx_type=WalletTransaction.WITHDRAW, amount=withdraw_form.cleaned_data["amount"])
+        return redirect("core:wallet")
+
+
+class TransactionListView(LoginRequiredMixin, ListView):
+    template_name = "core/transactions.html"
+    context_object_name = "transactions"
+
+    def get_queryset(self):
+        wallet, _ = Wallet.objects.get_or_create(user=self.request.user)
+        txs = list(wallet.transactions.all())
+        trades = list(Trade.objects.filter(status=Trade.RELEASED).filter(models.Q(buyer=self.request.user) | models.Q(seller=self.request.user)))
+        return sorted(txs + trades, key=lambda x: x.created_at if isinstance(x, Trade) else x.timestamp, reverse=True)
 

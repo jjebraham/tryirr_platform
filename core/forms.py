@@ -110,3 +110,29 @@ class KYCSelfieForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ["selfie"]
+
+
+class OfferForm(forms.ModelForm):
+    class Meta:
+        from .models import Offer
+        model = Offer
+        fields = ["type", "currency_pair", "amount", "rate", "payment_methods"]
+        widgets = {
+            "type": forms.Select(attrs={"class": "border rounded p-2"}),
+            "currency_pair": forms.Select(attrs={"class": "border rounded p-2"}),
+            "amount": forms.NumberInput(attrs={"class": "border rounded p-2"}),
+            "rate": forms.NumberInput(attrs={"class": "border rounded p-2"}),
+            "payment_methods": forms.TextInput(attrs={"class": "border rounded p-2 w-full"}),
+        }
+
+
+class ChatMessageForm(forms.Form):
+    message = forms.CharField(widget=forms.Textarea(attrs={"class": "border rounded p-2 w-full", "rows": 3}))
+
+
+class DepositForm(forms.Form):
+    amount = forms.DecimalField(min_value=0, decimal_places=2, widget=forms.NumberInput(attrs={"class": "border rounded p-2"}))
+
+
+class WithdrawForm(forms.Form):
+    amount = forms.DecimalField(min_value=0, decimal_places=2, widget=forms.NumberInput(attrs={"class": "border rounded p-2"}))

@@ -1,0 +1,30 @@
+{% extends "core/base.html" %}
+{% block title %}New Offer{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Create Offer</h1>
+<form method="post" class="space-y-4">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  <div>
+    <label class="block mb-1">Type</label>
+    {{ form.type }}
+  </div>
+  <div>
+    <label class="block mb-1">Pair</label>
+    {{ form.currency_pair }}
+  </div>
+  <div>
+    <label class="block mb-1">Amount</label>
+    {{ form.amount }}
+  </div>
+  <div>
+    <label class="block mb-1">Rate</label>
+    {{ form.rate }}
+  </div>
+  <div>
+    <label class="block mb-1">Payment Methods</label>
+    {{ form.payment_methods }}
+  </div>
+  <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Create</button>
+</form>
+{% endblock %}
