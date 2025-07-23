@@ -1,0 +1,34 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Verification Center{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+  <h1 class="text-3xl font-bold mb-6">Verification Center</h1>
+
+  <div class="mb-4 border-b">
+    <nav class="flex -mb-px">
+      <a href="#phone" class="mr-4 pb-2 border-b-2 border-blue-600">Phone Verification</a>
+      <a href="#email" class="pb-2">Email Verification</a>
+    </nav>
+  </div>
+
+  <div id="phone" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow mb-6">
+    <h2 class="text-xl font-semibold mb-4">Phone Verification</h2>
+    <form>
+      <label class="block mb-1">Phone number</label>
+      <input type="text" class="border rounded p-2 w-full mb-3">
+      <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded">Send Code</button>
+    </form>
+  </div>
+
+  <div id="email" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+    <h2 class="text-xl font-semibold mb-4">Email Verification</h2>
+    <form>
+      <label class="block mb-1">Email</label>
+      <input type="email" class="border rounded p-2 w-full mb-3">
+      <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded">Send Code</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

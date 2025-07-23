@@ -45,6 +45,14 @@ def dashboard(request):
     })
 
 
+@login_required
+def wallet(request):
+    return render(request, "core/wallet.html", {
+        "tl_wallet": getattr(request.user, "tl_wallet", "N/A"),
+        "usdt_balance": getattr(request.user, "usdt_balance", 0),
+    })
+
+
 # 🔄 KYC Wizard Implementation
 class KYCStepMixin(LoginRequiredMixin, FormView):
     step = ""
@@ -60,6 +68,7 @@ class KYCStepMixin(LoginRequiredMixin, FormView):
         ctx = super().get_context_data(**kwargs)
         ctx["steps"] = self.get_step_statuses()
         ctx["back_url"] = reverse(self.prev_url_name) if self.prev_url_name else None
+        ctx["next_url"] = reverse(self.next_url_name) if self.next_url_name else None
         return ctx
 
     def get_step_statuses(self):
@@ -212,7 +221,7 @@ def kyc_start(request):
 
 @login_required
 def verification(request):
-    return kyc_start(request)
+    return render(request, "core/verification_center.html")
 
 
 def rates_api(request):
