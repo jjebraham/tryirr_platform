@@ -1,0 +1,29 @@
+{% extends 'core/base.html' %}
+{% block title %}My Trades{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">My Trades</h1>
+<table class="min-w-full bg-white dark:bg-gray-800 rounded shadow text-sm">
+  <thead class="bg-gray-100 dark:bg-gray-700">
+    <tr>
+      <th class="px-3 py-2 text-left">ID</th>
+      <th class="px-3 py-2 text-left">Status</th>
+      <th class="px-3 py-2 text-left">Amount</th>
+      <th class="px-3 py-2 text-left">Price</th>
+      <th class="px-3 py-2 text-left"></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for trade in trades %}
+    <tr class="border-t border-gray-200 dark:border-gray-700">
+      <td class="px-3 py-2">{{ trade.id }}</td>
+      <td class="px-3 py-2">{{ trade.get_status_display }}</td>
+      <td class="px-3 py-2">{{ trade.amount }}</td>
+      <td class="px-3 py-2">{{ trade.price }}</td>
+      <td class="px-3 py-2 text-right"><a href="{% url 'market:trade_detail' trade.id %}" class="text-blue-600">View</a></td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="5" class="px-3 py-4 text-center">No trades found.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from .models import CustomUser
+from .models import CustomUser, Offer, ChatMessage
 
 
 class PersonalInfoForm(forms.ModelForm):
@@ -110,3 +110,54 @@ class KYCSelfieForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ["selfie"]
+
+from .models import Offer, ChatMessage
+
+class OfferForm(forms.ModelForm):
+    class Meta:
+        model = Offer
+        fields = [
+            "side",
+            "currency",
+            "amount",
+            "price",
+            "min_amount",
+            "max_amount",
+            "payment_methods",
+        ]
+        widgets = {
+            "side": forms.Select(attrs={"class": "border rounded p-2"}),
+            "currency": forms.Select(attrs={"class": "border rounded p-2"}),
+            "amount": forms.NumberInput(attrs={"class": "border rounded p-2"}),
+            "price": forms.NumberInput(attrs={"class": "border rounded p-2"}),
+            "min_amount": forms.NumberInput(attrs={"class": "border rounded p-2"}),
+            "max_amount": forms.NumberInput(attrs={"class": "border rounded p-2"}),
+            "payment_methods": forms.TextInput(attrs={"class": "border rounded p-2 w-full"}),
+        }
+
+    def clean(self):
+        cleaned = super().clean()
+        amount = cleaned.get("amount")
+        price = cleaned.get("price")
+        min_amount = cleaned.get("min_amount")
+        if amount is not None and amount <= 0:
+            self.add_error("amount", "Amount must be positive")
+        if price is not None and price <= 0:
+            self.add_error("price", "Price must be positive")
+        if amount and min_amount and min_amount > amount:
+            self.add_error("min_amount", "Min amount cannot exceed total amount")
+        return cleaned
+
+class OfferFilterForm(forms.Form):
+    currency = forms.ChoiceField(choices=Offer.CURRENCY_CHOICES, required=False)
+    side = forms.ChoiceField(choices=Offer.SIDE_CHOICES, required=False)
+    min_price = forms.DecimalField(required=False, min_value=0, decimal_places=2)
+    max_price = forms.DecimalField(required=False, min_value=0, decimal_places=2)
+
+class ChatMessageForm(forms.ModelForm):
+    class Meta:
+        model = ChatMessage
+        fields = ["message"]
+        widgets = {
+            "message": forms.TextInput(attrs={"class": "border rounded p-2 w-full"})
+        }

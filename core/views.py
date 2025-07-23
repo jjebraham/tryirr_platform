@@ -3,7 +3,7 @@ from pathlib import Path
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
@@ -21,6 +21,11 @@ from .forms import (
 )
 from .services.rates import fetch_try_irr_rates, fetch_all_rates
 from .services.verification import send_phone_code, send_email_code
+from django.contrib import messages
+from django.views.generic import ListView, CreateView, DetailView
+from django.db import models
+from .models import Offer, Trade, ChatMessage, Wallet
+from .forms import OfferForm, OfferFilterForm, ChatMessageForm
 
 
 def home(request):
@@ -240,3 +245,105 @@ def updates(request):
         content = "No updates available."
     return render(request, "core/updates.html", {"content": content})
 
+
+
+class MarketListView(ListView):
+    model = Offer
+    template_name = 'market/market_list.html'
+    context_object_name = 'offers'
+
+    def get_queryset(self):
+        qs = Offer.objects.all()
+        form = OfferFilterForm(self.request.GET or None)
+        if form.is_valid():
+            if form.cleaned_data.get('side'):
+                qs = qs.filter(side=form.cleaned_data['side'])
+            if form.cleaned_data.get('currency'):
+                qs = qs.filter(currency=form.cleaned_data['currency'])
+            if form.cleaned_data.get('min_price') is not None:
+                qs = qs.filter(price__gte=form.cleaned_data['min_price'])
+            if form.cleaned_data.get('max_price') is not None:
+                qs = qs.filter(price__lte=form.cleaned_data['max_price'])
+        self.filter_form = form
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['filter_form'] = getattr(self, 'filter_form', OfferFilterForm())
+        return ctx
+
+class OfferCreateView(LoginRequiredMixin, CreateView):
+    model = Offer
+    form_class = OfferForm
+    template_name = 'market/offer_form.html'
+    success_url = reverse_lazy('market:market')
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        messages.success(self.request, 'Offer created successfully.')
+        return super().form_valid(form)
+
+class MyTradesListView(LoginRequiredMixin, ListView):
+    model = Trade
+    template_name = 'market/trade_list.html'
+    context_object_name = 'trades'
+
+    def get_queryset(self):
+        user = self.request.user
+        return Trade.objects.filter(models.Q(buyer=user) | models.Q(seller=user)).order_by('-created_at')
+
+class TradeDetailView(LoginRequiredMixin, DetailView):
+    model = Trade
+    template_name = 'market/trade_detail.html'
+    context_object_name = 'trade'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['chat_form'] = ChatMessageForm()
+        ctx['messages'] = self.object.messages.select_related('user')
+        return ctx
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        action = request.POST.get('action')
+        if action == 'chat':
+            form = ChatMessageForm(request.POST)
+            if form.is_valid():
+                ChatMessage.objects.create(trade=self.object, user=request.user, message=form.cleaned_data['message'])
+        elif action == 'mark_paid' and request.user == self.object.buyer:
+            self.object.status = Trade.PAID
+            self.object.save(update_fields=['status'])
+        elif action == 'release_funds' and request.user == self.object.seller:
+            self.object.status = Trade.COMPLETED
+            self.object.save(update_fields=['status'])
+        elif action == 'cancel':
+            self.object.status = Trade.CANCELLED
+            self.object.save(update_fields=['status'])
+        return redirect('market:trade_detail', pk=self.object.pk)
+
+@login_required
+def place_trade(request, offer_id):
+    offer = Offer.objects.get(pk=offer_id)
+    if offer.side == Offer.SELL:
+        buyer = request.user
+        seller = offer.owner
+    else:
+        seller = request.user
+        buyer = offer.owner
+    trade = Trade.objects.create(
+        offer=offer,
+        buyer=buyer,
+        seller=seller,
+        amount=offer.amount,
+        price=offer.price,
+    )
+    return redirect('market:trade_detail', pk=trade.pk)
+
+class WalletView(LoginRequiredMixin, DetailView):
+    template_name = 'market/wallet.html'
+    model = Wallet
+    context_object_name = 'wallet'
+
+    def get_object(self, queryset=None):
+        wallet, _ = Wallet.objects.get_or_create(user=self.request.user)
+        return wallet
