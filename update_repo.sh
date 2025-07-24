@@ -18,12 +18,16 @@ LOCAL=$(git rev-parse HEAD)
 REMOTE=$(git rev-parse @{u})
 
 if [ "$LOCAL" != "$REMOTE" ]; then
-    COMMIT_MSG=$(git log --oneline HEAD..@{u})
-    git pull
-    sudo supervisorctl restart "$APP_NAME"
-
-    MESSAGE="Auto-update detected and ${APP_NAME} restarted.%0A${COMMIT_MSG}"
-    curl -s -X POST "https://api.telegram.org/bot${MONITOR_BOT_TOKEN}/sendMessage" \
-         -d "chat_id=${MONITOR_CHANNEL_ID}" \
-         -d "text=${MESSAGE}"
+    CHANGED_FILES=$(git diff --name-only HEAD..@{u} | xargs)
+    if git pull && sudo supervisorctl restart "$APP_NAME"; then
+        MESSAGE="Updated ${APP_NAME} with changes:%0A${CHANGED_FILES}"
+        curl -s -X POST "https://api.telegram.org/bot${MONITOR_BOT_TOKEN}/sendMessage" \
+             -d "chat_id=${MONITOR_CHANNEL_ID}" \
+             -d "text=${MESSAGE}"
+    else
+        ERR="Update failed for ${APP_NAME}"
+        curl -s -X POST "https://api.telegram.org/bot${MONITOR_BOT_TOKEN}/sendMessage" \
+             -d "chat_id=${MONITOR_CHANNEL_ID}" \
+             -d "text=${ERR}"
+    fi
 fi
