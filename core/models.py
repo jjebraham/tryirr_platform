@@ -52,11 +52,6 @@ class CustomUser(AbstractUser):
     address_city = models.CharField(max_length=100, null=True, blank=True)
     address_zip = models.CharField(max_length=20, null=True, blank=True)
     address_street = models.CharField(max_length=255, null=True, blank=True)
-    address_document = models.FileField(
-        upload_to="kyc/address/",
-        null=True,
-        blank=True,
-    )
 
     # Guarantee deposit
     deposit_proof = models.FileField(
