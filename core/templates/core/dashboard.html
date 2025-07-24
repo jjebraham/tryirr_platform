@@ -36,7 +36,7 @@
           {% trans "Exchange Rates" %}
         </h2>
       </div>
-      <div class="p-4">
+      <div class="p-4 overflow-x-auto">
         <table id="live-rates-table" class="w-full text-sm">
           <thead>
             <tr>
@@ -74,19 +74,22 @@
         async function fetchRates() {
           try {
             const resp = await fetch("{% url 'core:live_rates' %}");
-            if (!resp.ok) return;
+            if (!resp.ok) throw new Error('network');
             const data = await resp.json();
             if (data.TL_IRR !== null) {
-              document.getElementById("rate-tl-irr").textContent = Number(data.TL_IRR).toFixed(2);
-              document.getElementById("rate-irr-tl").textContent = Number(data.IRR_TL).toFixed(6);
-              document.getElementById("rate-usdt-tl").textContent = Number(data.USDT_TL).toFixed(2);
-              document.getElementById("rate-tl-usdt").textContent = Number(data.TL_USDT).toFixed(4);
+              document.getElementById('rate-tl-irr').textContent = Number(data.TL_IRR).toFixed(2);
+              document.getElementById('rate-irr-tl').textContent = Number(data.IRR_TL).toFixed(6);
+              document.getElementById('rate-usdt-tl').textContent = Number(data.USDT_TL).toFixed(2);
+              document.getElementById('rate-tl-usdt').textContent = Number(data.TL_USDT).toFixed(4);
             }
           } catch (e) {
             console.error(e);
+            document.querySelector('#live-rates-table tbody').innerHTML =
+              '<tr><td colspan="2" class="text-center text-red-500">{% trans "Unavailable" %}</td></tr>';
           }
         }
         setInterval(fetchRates, 10000);
+        fetchRates();
       </script>
     </div>
 

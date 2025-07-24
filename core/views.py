@@ -18,6 +18,8 @@ from .forms import (
     ProofOfAddressForm,
     GuaranteeDepositForm,
     ConversionForm,
+    WalletDepositForm,
+    WalletWithdrawForm,
 )
 from .services.rates import fetch_try_irr_rates, fetch_all_rates
 from .services.verification import send_phone_code, send_email_code
@@ -55,12 +57,30 @@ def wallet(request):
 
 @login_required
 def wallet_deposit(request):
-    return JsonResponse({"status": "ok", "action": "deposit"})
+    form = WalletDepositForm(request.POST or None)
+    if form.is_valid():
+        # In a real app you'd create a deposit transaction record here
+        return redirect("core:wallet_deposit_success")
+    return render(request, "core/wallet_deposit.html", {"form": form})
+
+
+@login_required
+def wallet_deposit_success(request):
+    return render(request, "core/wallet_deposit_success.html")
 
 
 @login_required
 def wallet_withdraw(request):
-    return JsonResponse({"status": "ok", "action": "withdraw"})
+    form = WalletWithdrawForm(request.POST or None)
+    if form.is_valid():
+        # In a real app you'd process the withdrawal request here
+        return redirect("core:wallet_withdraw_success")
+    return render(request, "core/wallet_withdraw.html", {"form": form})
+
+
+@login_required
+def wallet_withdraw_success(request):
+    return render(request, "core/wallet_withdraw_success.html")
 
 
 # 🔄 KYC Wizard Implementation
