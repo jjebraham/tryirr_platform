@@ -8,8 +8,8 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "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
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "kianirad.website",     # your apex domain
-    ".kianirad.website",    # all subdomains (e.g. www, exchange, etc)
+    "poolexo.com",
+    ".poolexo.com",
     "127.0.0.1",
     "localhost",
 ]
@@ -17,9 +17,9 @@ ALLOWED_HOSTS = [
 # ─── PROXY & CSRF TRUST ──────────────────────────────────────────────────────────        
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 CSRF_TRUSTED_ORIGINS = [
-    "https://kianirad.website",
-    "https://www.kianirad.website",
-    "https://exchange.kianirad.website",
+    "https://poolexo.com",
+    "https://www.poolexo.com",
+    "https://exchange.poolexo.com",
 ]
 
 # ─── INSTALLED APPS ─────────────────────────────────────────────────────────────
@@ -136,10 +136,22 @@ SOCIALACCOUNT_PROVIDERS = {
 
 # ─── EMAIL (dev) ────────────────────────────────────────────────────────────────
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "Poolexo <noreply@poolexo.com>"
 
 # Instructions displayed during the final KYC step.
 DEPOSIT_INSTRUCTIONS = (
     "Please transfer the required guarantee deposit to our bank account and "
     "upload proof of payment below."
 )
+
+# ─── SENTRY ───────────────────────────────────────────────────────────────────
+SENTRY_DSN = os.getenv("SENTRY_DSN")
+if SENTRY_DSN:
+    try:
+        import sentry_sdk
+
+        sentry_sdk.init(dsn=SENTRY_DSN)
+    except ImportError:
+        pass
+
 
