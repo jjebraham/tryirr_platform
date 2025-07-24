@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Withdraw" %}{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto">
+  <h1 class="text-2xl font-bold mb-4">{% trans "Withdraw" %}</h1>
+  <form method="post" class="space-y-4">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div>
+      {{ form.amount.label_tag }}
+      {{ form.amount }}
+    </div>
+    <div>
+      {{ form.address.label_tag }}
+      {{ form.address }}
+    </div>
+    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">{% trans "Submit" %}</button>
+  </form>
+</div>
+{% endblock %}
