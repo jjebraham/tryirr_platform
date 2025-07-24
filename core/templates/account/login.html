@@ -1,5 +1,6 @@
 {% extends "core/base.html" %}
 {% load i18n socialaccount %}
+{% get_providers as social_providers %}
 
 {% block title %}{% trans "Log In" %} | Poolexo.com{% endblock %}
 
@@ -24,7 +25,7 @@
              type="text"
              required
              placeholder="{% trans 'Username or email' %}"
-             class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-full
+             class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-full        
                     focus:ring-blue-500 focus:border-blue-500" />
       {{ form.login.errors }}
     </div>
@@ -39,7 +40,7 @@
                type="password"
                required
                placeholder="••••••••"
-               class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-full
+               class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-full      
                       focus:ring-blue-500 focus:border-blue-500 pr-10" />
         <button type="button"
                 class="absolute inset-y-0 right-3 flex items-center text-gray-500 toggle-password"
@@ -50,8 +51,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 
-                     8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0
+                     8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542
                      7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
         </button>
@@ -60,7 +61,7 @@
     </div>
 
     <button type="submit"
-            class="w-full py-3 bg-black text-white rounded-full hover:bg-gray-800">
+            class="w-full py-3 bg-black text-white rounded-full hover:bg-gray-800">        
       {% trans "Login" %}
     </button>
   </form>
@@ -68,7 +69,7 @@
   <!-- “Don’t have an account?” + signup link -->
   <div class="mt-4 text-center text-sm text-gray-600">
     {% trans "Don't have an account?" %}
-    <a href="{% url 'account_signup' %}" class="font-medium text-black hover:underline">
+    <a href="{% url 'account_signup' %}" class="font-medium text-black hover:underline">   
       {% trans "Sign up" %}
     </a>
   </div>
@@ -81,17 +82,20 @@
     </div>
   </div>
 
-  <!-- Google login button -->
-  <div>
-    <a href="{% provider_login_url 'google' process='login' %}"
-       class="w-full flex items-center justify-center py-3 px-4 border border-gray-300
-              rounded-full hover:bg-gray-50">
-      <img src="https://www.svgrepo.com/show/355037/google.svg"
-           alt="Google"
-           class="w-5 h-5 mr-2" />
-      {% trans "Continue with Google" %}
-    </a>
-  </div>
+  {# Only show Google button if a Google SocialApp exists #}
+  {% if social_providers.google %}
+    <!-- Google login button -->
+    <div>
+      <a href="{% provider_login_url 'google' process='login' %}"
+         class="w-full flex items-center justify-center py-3 px-4 border border-gray-300     
+                rounded-full hover:bg-gray-50">
+        <img src="https://www.svgrepo.com/show/355037/google.svg"
+             alt="Google"
+             class="w-5 h-5 mr-2" />
+        {% trans "Continue with Google" %}
+      </a>
+    </div>
+  {% endif %}
 </div>
 
 <script>
