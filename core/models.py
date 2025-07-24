@@ -6,6 +6,7 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
     phone_verified = models.BooleanField(default=False)
     email_verified = models.BooleanField(default=False)
+    two_factor_enabled = models.BooleanField(default=False)
     kyc_level = models.PositiveIntegerField(default=0)  # Level 0 = unverified
 
     # Personal info
@@ -38,11 +39,6 @@ class CustomUser(AbstractUser):
     )
     proof_of_address = models.FileField(
         upload_to="kyc/address/",
-        null=True,
-        blank=True
-    )
-    deposit_proof = models.FileField(
-        upload_to="kyc/deposit/",
         null=True,
         blank=True
     )

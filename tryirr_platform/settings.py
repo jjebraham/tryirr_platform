@@ -134,8 +134,9 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-# ─── EMAIL (dev) ────────────────────────────────────────────────────────────────
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# ─── EMAIL ────────────────────────────────────────────────────────────────
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
 # Instructions displayed during the final KYC step.
 DEPOSIT_INSTRUCTIONS = (
