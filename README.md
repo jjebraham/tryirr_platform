@@ -30,3 +30,15 @@ Add the following line:
 
 This will log the output to `update_log.txt` and notify the configured Telegram
 channel whenever the repository updates and the app is restarted.
+
+## Database migrations
+
+After modifying models you should generate and apply migrations:
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+The project uses SendGrid for email delivery. Set `SENDGRID_API_KEY` in your
+environment before running the app.
