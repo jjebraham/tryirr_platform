@@ -8,10 +8,12 @@ urlpatterns = [
 
     # Post‑login dashboard
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('verification/', views.verification, name='verification'),
 
     path('wallet/', views.wallet, name='wallet'),
 
     # ✅ KYC Wizard Views
+    path('kyc/', views.kyc_start, name='kyc_start'),
     path('kyc/', views.kyc_start, name='kyc'),
     path('kyc/phone/',   views.PhoneVerificationView.as_view(),    name='kyc_phone'),      
     path('kyc/email/',   views.EmailVerificationView.as_view(),    name='kyc_email'),      
@@ -20,7 +22,6 @@ urlpatterns = [
     path('kyc/deposit/', views.GuaranteeDepositView.as_view(),     name='kyc_deposit'),    
 
     # ✅ Extra Views
-    path('verification/', views.verification, name='verification'),
     path('rates/', views.rates_api, name='rates'),
     path('updates/', views.updates, name='updates'),
     path('live-rates/', views.live_rates, name='live_rates'),

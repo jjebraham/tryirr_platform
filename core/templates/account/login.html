@@ -1,5 +1,6 @@
 {% extends "core/base.html" %}
 {% load i18n socialaccount %}
+{% get_providers as social_providers %}
 
 {% block title %}{% trans "Log In" %} | Peerexo.com{% endblock %}
 
@@ -82,6 +83,7 @@
   </div>
 
   <!-- Google login button -->
+  {% if social_providers.google %}
   <div>
     <a href="{% provider_login_url 'google' process='login' %}"
        class="w-full flex items-center justify-center py-3 px-4 border border-gray-300
@@ -92,6 +94,7 @@
       {% trans "Continue with Google" %}
     </a>
   </div>
+  {% endif %}
 </div>
 
 <script>
