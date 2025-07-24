@@ -73,6 +73,29 @@ class GuaranteeDepositForm(forms.ModelForm):
         fields = ["deposit_proof"]
 
 
+class WalletDepositForm(forms.Form):
+    amount = forms.DecimalField(
+        label=_("Amount"),
+        min_value=0,
+        decimal_places=2,
+        widget=forms.NumberInput(attrs={"class": "border rounded p-2 w-full", "step": "0.01"}),
+    )
+
+
+class WalletWithdrawForm(forms.Form):
+    amount = forms.DecimalField(
+        label=_("Amount"),
+        min_value=0,
+        decimal_places=2,
+        widget=forms.NumberInput(attrs={"class": "border rounded p-2 w-full", "step": "0.01"}),
+    )
+    address = forms.CharField(
+        label=_("Destination"),
+        max_length=255,
+        widget=forms.TextInput(attrs={"class": "border rounded p-2 w-full"}),
+    )
+
+
 class ConversionForm(forms.Form):
     CHOICES = [
         ("TL_TO_IRR", _("TL → IRR")),
