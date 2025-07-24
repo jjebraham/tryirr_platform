@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+{% block title %}Trade {{ trade.id }}{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Trade #{{ trade.id }}</h1>
+<div class="bg-white dark:bg-gray-800 p-4 rounded shadow mb-4">
+  <p><strong>Status:</strong> {{ trade.get_status_display }}</p>
+  <p><strong>Amount:</strong> {{ trade.amount }}</p>
+  <p><strong>Price:</strong> {{ trade.price }}</p>
+  <p><strong>Counterpart:</strong> {% if user == trade.buyer %}{{ trade.seller.username }}{% else %}{{ trade.buyer.username }}{% endif %}</p>
+</div>
+<div class="bg-white dark:bg-gray-800 p-4 rounded shadow mb-4">
+  <h2 class="font-semibold mb-2">Chat</h2>
+  <div class="space-y-2 mb-2 max-h-60 overflow-y-auto">
+    {% for msg in messages %}
+      <div><strong>{{ msg.user.username }}:</strong> {{ msg.message }}</div>
+    {% empty %}
+      <p>No messages.</p>
+    {% endfor %}
+  </div>
+  <form method="post" class="flex space-x-2">
+    {% csrf_token %}
+    {{ chat_form.message }}
+    <button type="submit" name="action" value="chat" class="px-4 py-2 bg-blue-600 text-white rounded">Send</button>
+  </form>
+</div>
+<div class="space-x-2">
+  {% if user == trade.buyer and trade.status == 'OPEN' %}
+    <form method="post" class="inline">
+      {% csrf_token %}
+      <button type="submit" name="action" value="mark_paid" class="px-4 py-2 bg-yellow-600 text-white rounded">Mark Paid</button>
+    </form>
+  {% endif %}
+  {% if user == trade.seller and trade.status == 'PAID' %}
+    <form method="post" class="inline">
+      {% csrf_token %}
+      <button type="submit" name="action" value="release_funds" class="px-4 py-2 bg-green-600 text-white rounded">Release Funds</button>
+    </form>
+  {% endif %}
+  {% if trade.status == 'OPEN' %}
+    <form method="post" class="inline">
+      {% csrf_token %}
+      <button type="submit" name="action" value="cancel" class="px-4 py-2 bg-red-600 text-white rounded">Cancel Trade</button>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'core/base.html' %}
+{% block title %}Marketplace{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Marketplace</h1>
+<form method="get" class="mb-6 bg-white dark:bg-gray-800 p-4 rounded shadow">
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    {{ filter_form.currency.label_tag }}{{ filter_form.currency }}
+    {{ filter_form.side.label_tag }}{{ filter_form.side }}
+    {{ filter_form.min_price.label_tag }}{{ filter_form.min_price }}
+    {{ filter_form.max_price.label_tag }}{{ filter_form.max_price }}
+  </div>
+  <button type="submit" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">Filter</button>
+</form>
+<table class="min-w-full bg-white dark:bg-gray-800 rounded shadow text-sm">
+  <thead class="bg-gray-100 dark:bg-gray-700">
+    <tr>
+      <th class="px-3 py-2 text-left">Side</th>
+      <th class="px-3 py-2 text-left">Amount</th>
+      <th class="px-3 py-2 text-left">Price</th>
+      <th class="px-3 py-2 text-left">Min/Max</th>
+      <th class="px-3 py-2 text-left">Payment Methods</th>
+      <th class="px-3 py-2 text-left">Owner</th>
+      <th class="px-3 py-2"></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for offer in offers %}
+    <tr class="border-t border-gray-200 dark:border-gray-700">
+      <td class="px-3 py-2">{{ offer.get_side_display }}</td>
+      <td class="px-3 py-2">{{ offer.amount }} {{ offer.currency }}</td>
+      <td class="px-3 py-2">{{ offer.price }}</td>
+      <td class="px-3 py-2">{{ offer.min_amount }} / {{ offer.max_amount }}</td>
+      <td class="px-3 py-2">{{ offer.payment_methods }}</td>
+      <td class="px-3 py-2">{{ offer.owner.username }}</td>
+      <td class="px-3 py-2 text-right"><a href="{% url 'market:place_trade' offer.id %}" class="text-blue-600">Place Trade</a></td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="7" class="px-3 py-4 text-center">No offers found.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

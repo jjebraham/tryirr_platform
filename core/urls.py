@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 app_name = 'core'
@@ -24,5 +24,6 @@ urlpatterns = [
     path('rates/', views.rates_api, name='rates'),
     path('updates/', views.updates, name='updates'),
     path('live-rates/', views.live_rates, name='live_rates'),
+    path("", include(("core.market_urls", "market"), namespace="market")),
 ]
 
