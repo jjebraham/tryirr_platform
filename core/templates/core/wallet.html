@@ -13,4 +13,9 @@
     <p>{{ usdt_balance }}</p>
   </div>
 </div>
+
+<div class="mt-6 flex gap-4">
+  <a href="{% url 'core:wallet_deposit' %}" class="px-4 py-2 bg-blue-600 text-white rounded">Deposit</a>
+  <a href="{% url 'core:wallet_withdraw' %}" class="px-4 py-2 bg-blue-600 text-white rounded">Withdraw</a>
+</div>
 {% endblock %}
