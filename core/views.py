@@ -53,6 +53,16 @@ def wallet(request):
     })
 
 
+@login_required
+def wallet_deposit(request):
+    return JsonResponse({"status": "ok", "action": "deposit"})
+
+
+@login_required
+def wallet_withdraw(request):
+    return JsonResponse({"status": "ok", "action": "withdraw"})
+
+
 # 🔄 KYC Wizard Implementation
 class KYCStepMixin(LoginRequiredMixin, FormView):
     step = ""
@@ -221,7 +231,11 @@ def kyc_start(request):
 
 @login_required
 def verification(request):
-    return render(request, "core/verification_center.html")
+    return render(
+        request,
+        "core/verification_center.html",
+        {"level": request.user.kyc_level, "levels": range(8)},
+    )
 
 
 def rates_api(request):
@@ -247,5 +261,23 @@ def updates(request):
         content = updates_file.read_text()
     except Exception:
         content = "No updates available."
-    return render(request, "core/updates.html", {"content": content})
+    html_content = markdown_to_html(content)
+    return render(request, "core/updates.html", {"content": html_content})
+
+
+def markdown_to_html(text: str) -> str:
+    import html
+
+    lines = text.splitlines()
+    html_lines = []
+    for ln in lines:
+        if ln.startswith("# "):
+            html_lines.append(f"<h1>{html.escape(ln[2:])}</h1>")
+        elif ln.startswith("## "):
+            html_lines.append(f"<h2>{html.escape(ln[3:])}</h2>")
+        elif ln.startswith("- "):
+            html_lines.append(f"<li>{html.escape(ln[2:])}</li>")
+        else:
+            html_lines.append(f"<p>{html.escape(ln)}</p>")
+    return "\n".join(html_lines)
 

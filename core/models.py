@@ -78,3 +78,23 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return f"{self.username} ({self.phone_number})"
 
+
+class SiteSettings(models.Model):
+    """Stores runtime editable API keys and credentials."""
+
+    sendgrid_api_key = models.CharField(max_length=255, blank=True)
+    sms_api_key = models.CharField(max_length=255, blank=True)
+    telegram_bot_token = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        verbose_name = "Site settings"
+        verbose_name_plural = "Site settings"
+
+    def __str__(self) -> str:  # pragma: no cover - simple representation
+        return "Site Settings"
+
+    @classmethod
+    def load(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+

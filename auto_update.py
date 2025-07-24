@@ -42,7 +42,7 @@ while True:
         run("python manage.py migrate --noinput")
         run("python manage.py collectstatic --noinput")
         subprocess.run(["sudo", "supervisorctl", "restart", APP_NAME])
-        notify("✅ Deployed latest code: added Verification Center link, renamed to Peerexo, wallet USDT balance…")
+        notify("✅ Deployed latest code: added Verification Center link, renamed to Poolexo, wallet USDT balance…")
 
     time.sleep(60)
 

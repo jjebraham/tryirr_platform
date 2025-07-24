@@ -10,6 +10,8 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
 
     path('wallet/', views.wallet, name='wallet'),
+    path('wallet/deposit/', views.wallet_deposit, name='wallet_deposit'),
+    path('wallet/withdraw/', views.wallet_withdraw, name='wallet_withdraw'),
 
     # ✅ KYC Wizard Views
     path('kyc/', views.kyc_start, name='kyc'),
