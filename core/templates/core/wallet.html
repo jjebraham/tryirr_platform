@@ -7,6 +7,10 @@
   <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
     <h2 class="text-lg font-semibold mb-2">TL Wallet</h2>
     <p>{{ tl_wallet }}</p>
+    <div class="mt-4 flex space-x-2">
+      <a href="{% url 'core:wallet_deposit' %}" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Deposit</a>
+      <a href="{% url 'core:wallet_withdraw' %}" class="px-4 py-2 rounded bg-gray-600 text-white hover:bg-gray-700">Withdraw</a>
+    </div>
   </div>
   <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
     <h2 class="text-lg font-semibold mb-2">USDT Balance</h2>
