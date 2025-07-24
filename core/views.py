@@ -53,6 +53,30 @@ def wallet(request):
     })
 
 
+@login_required
+def wallet_deposit(request):
+    if request.method == "POST":
+        return redirect("core:wallet_deposit_success")
+    return render(request, "core/wallet_deposit.html")
+
+
+@login_required
+def wallet_deposit_success(request):
+    return render(request, "core/wallet_deposit_success.html")
+
+
+@login_required
+def wallet_withdraw(request):
+    if request.method == "POST":
+        return redirect("core:wallet_withdraw_success")
+    return render(request, "core/wallet_withdraw.html")
+
+
+@login_required
+def wallet_withdraw_success(request):
+    return render(request, "core/wallet_withdraw_success.html")
+
+
 # 🔄 KYC Wizard Implementation
 class KYCStepMixin(LoginRequiredMixin, FormView):
     step = ""
@@ -221,7 +245,9 @@ def kyc_start(request):
 
 @login_required
 def verification(request):
-    return render(request, "core/verification_center.html")
+    return render(request, "core/verification_center.html", {
+        "kyc_level": request.user.kyc_level
+    })
 
 
 def rates_api(request):

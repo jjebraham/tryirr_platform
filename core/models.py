@@ -78,3 +78,15 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return f"{self.username} ({self.phone_number})"
 
+
+class SiteSettings(models.Model):
+    """Simple key/value storage for site wide settings."""
+
+    sendgrid_api_key = models.CharField(max_length=255, blank=True)
+    sms_api_key = models.CharField(max_length=255, blank=True)
+    telegram_api_key = models.CharField(max_length=255, blank=True)
+    dark_mode_enabled = models.BooleanField(default=True)
+
+    def __str__(self) -> str:  # pragma: no cover - simple representation
+        return "Site Settings"
+
