@@ -78,7 +78,7 @@ class KYCStepMixin(LoginRequiredMixin, FormView):
             {"label": "Phone verification", "done": u.phone_verified, "current": self.step == "phone"},
             {"label": "Email verification", "done": u.email_verified, "current": self.step == "email"},
             {"label": "ID & Selfie upload", "done": bool(u.id_document and u.selfie), "current": self.step == "identity"},
-            {"label": "Proof of address", "done": bool(u.address_document), "current": self.step == "address"},
+            {"label": "Proof of address", "done": bool(u.proof_of_address), "current": self.step == "address"},
             {"label": "Guarantee deposit", "done": bool(u.deposit_proof), "current": self.step == "deposit"},
         ]
 
@@ -196,7 +196,7 @@ class GuaranteeDepositView(KYCStepMixin):
         user = form.save()
         if (
             user.phone_verified and user.email_verified and user.id_document and user.selfie
-            and user.address_document and user.deposit_proof
+            and user.proof_of_address and user.deposit_proof
         ):
             user.kyc_level = 1
             user.save()
@@ -212,7 +212,7 @@ def kyc_start(request):
         return redirect("core:kyc_email")
     if not (u.id_document and u.selfie):
         return redirect("core:kyc_id")
-    if not u.address_document:
+    if not u.proof_of_address:
         return redirect("core:kyc_address")
     if not u.deposit_proof:
         return redirect("core:kyc_deposit")
