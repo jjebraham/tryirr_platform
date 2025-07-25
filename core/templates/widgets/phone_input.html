@@ -1,0 +1,4 @@
+<div class="flex">
+  <span class="inline-flex items-center px-3 border rounded-l bg-gray-100">+98</span>
+  <input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %} value="{{ widget.value|stringformat:'s' }}" class="flex-1 border border-l-0 rounded-r p-2" />
+</div>
