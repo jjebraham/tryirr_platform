@@ -1,0 +1,8 @@
+# Exclude your local virtualenv
+tryirr_env/
+
+# Exclude editor cruft, env files, etc.
+.env
+*.pyc
+__pycache__/
+.DS_Store
