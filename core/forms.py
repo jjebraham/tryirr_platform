@@ -63,7 +63,7 @@ class ProofOfAddressForm(forms.ModelForm):
             "address_city",
             "address_zip",
             "address_street",
-            "address_document",
+            "proof_of_address",
         ]
 
 
