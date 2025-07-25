@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from .models import CustomUser
+import re
 
 
 class PersonalInfoForm(forms.ModelForm):
@@ -33,9 +34,48 @@ class KYCForm(forms.ModelForm):
         }
 
 
+import re
+
+
+class PhoneNumberWidget(forms.TextInput):
+    """Input with a fixed +98 prefix."""
+    template_name = "widgets/phone_input.html"
+
+    def __init__(self, attrs=None):
+        attrs = attrs or {}
+        default = attrs.get("class", "")
+        attrs["class"] = (default + " border rounded p-2 w-full").strip()
+        attrs.setdefault("maxlength", "10")
+        super().__init__(attrs)
+
+
 class PhoneVerificationForm(forms.Form):
-    phone_number = forms.CharField(max_length=20, widget=forms.TextInput(attrs={"class": "border rounded p-2 w-full"}))
-    verification_code = forms.CharField(max_length=6, required=False, widget=forms.TextInput(attrs={"class": "border rounded p-2 w-full"}))
+    phone_number = forms.CharField(
+        label="Phone number",
+        max_length=10,
+        help_text="Enter the 10 digit number",
+        widget=PhoneNumberWidget(),
+    )
+    verification_code = forms.CharField(
+        label="Verification code",
+        max_length=6,
+        required=False,
+        widget=forms.TextInput(attrs={"class": "border rounded p-2 w-full"}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        initial = self.initial.get("phone_number")
+        if initial and initial.startswith("+98"):
+            self.initial["phone_number"] = initial[3:]
+
+    def clean_phone_number(self):
+        number = self.cleaned_data["phone_number"].strip()
+        if number.startswith("+98"):
+            number = number[3:]
+        if not re.fullmatch(r"\d{10}", number):
+            raise forms.ValidationError("Enter a valid 10-digit phone number.")
+        return f"+98{number}"
 
 
 class EmailVerificationForm(forms.Form):
