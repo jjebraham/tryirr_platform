@@ -2,6 +2,7 @@
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 
+
 class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
     phone_verified = models.BooleanField(default=False)
@@ -39,12 +40,12 @@ class CustomUser(AbstractUser):
     proof_of_address = models.FileField(
         upload_to="kyc/address/",
         null=True,
-        blank=True
+        blank=True,
     )
     deposit_proof = models.FileField(
         upload_to="kyc/deposit/",
         null=True,
-        blank=True
+        blank=True,
     )
 
     # Address proof
@@ -52,18 +53,6 @@ class CustomUser(AbstractUser):
     address_city = models.CharField(max_length=100, null=True, blank=True)
     address_zip = models.CharField(max_length=20, null=True, blank=True)
     address_street = models.CharField(max_length=255, null=True, blank=True)
-    address_document = models.FileField(
-        upload_to="kyc/address/",
-        null=True,
-        blank=True,
-    )
-
-    # Guarantee deposit
-    deposit_proof = models.FileField(
-        upload_to="kyc/deposit/",
-        null=True,
-        blank=True,
-    )
 
     # Override groups/permissions to avoid clashes:
     groups = models.ManyToManyField(
@@ -78,3 +67,39 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return f"{self.username} ({self.phone_number})"
 
+
+class IntegrationSettings(models.Model):
+    ghasedak_api_key = models.CharField(max_length=255)
+    ghasedak_template_name = models.CharField(max_length=100)
+    mailgrid_api_key = models.CharField(max_length=255)
+    mailgrid_sender_email = models.EmailField()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        IntegrationSettings.objects.exclude(id=self.id).delete()
+
+    @classmethod
+    def get_solo(cls):
+        obj = cls.objects.first()
+        if not obj:
+            obj = cls()
+            obj.save()
+        return obj
+
+    def __str__(self):
+        return "Integration Settings"
+
+
+
+class SiteConfiguration(models.Model):
+    ghasedak_api_key = models.CharField(max_length=255, blank=True)
+    ghasedak_template_name = models.CharField(max_length=255, blank=True)
+    mailgrid_api_key = models.CharField(max_length=255, blank=True)
+    mailgrid_sender = models.EmailField(blank=True)
+
+    class Meta:
+        verbose_name = "Site configuration"
+        verbose_name_plural = "Site configuration"
+
+    def __str__(self):
+        return "Site configuration"
