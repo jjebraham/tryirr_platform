@@ -1,0 +1,16 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Wallet{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+    <h2 class="text-lg font-semibold mb-2">TL Wallet</h2>
+    <p>{{ tl_wallet }}</p>
+  </div>
+  <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+    <h2 class="text-lg font-semibold mb-2">USDT Balance</h2>
+    <p>{{ usdt_balance }}</p>
+  </div>
+</div>
+{% endblock %}

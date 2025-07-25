@@ -39,9 +39,10 @@ while True:
         print("Update found. Pulling and restarting...")
         notify("Update found. Pulling latest changes...")
         run("git pull")
-        notify(f"Pulled latest code. Restarting {APP_NAME}...")
+        run("python manage.py migrate --noinput")
+        run("python manage.py collectstatic --noinput")
         subprocess.run(["sudo", "supervisorctl", "restart", APP_NAME])
-        notify(f"Service {APP_NAME} restarted.")
+        notify("✅ Deployed latest code: added Verification Center link, renamed to Peerexo, wallet USDT balance…")
 
     time.sleep(60)
 

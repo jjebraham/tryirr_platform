@@ -10,9 +10,12 @@
 <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">
     {% trans "Dashboard" %}
 </h1>
-<div class="mb-6">
-  <a href="{% url 'core:kyc' %}" class="px-4 py-2 bg-blue-600 text-white rounded">
+<div class="mb-6 flex gap-4">
+  <a href="{% url 'core:verification' %}" class="px-4 py-2 bg-blue-600 text-white rounded">
     {% trans "Verification Center" %}
+  </a>
+  <a href="{% url 'core:wallet' %}" class="px-4 py-2 bg-blue-600 text-white rounded">
+    {% trans "Wallet" %}
   </a>
 </div>
 
@@ -33,22 +36,58 @@
           {% trans "Exchange Rates" %}
         </h2>
       </div>
-      <div class="p-4 space-y-2">
-        {% if rates.TRY_IRR %}
-          <div class="flex justify-between text-gray-700 dark:text-gray-300">
-            <span>1 TRY →</span>
-            <span>{{ rates.TRY_IRR|floatformat:2 }} IRR</span>
-          </div>
-          <div class="flex justify-between text-gray-700 dark:text-gray-300">
-            <span>1 IRR →</span>
-            <span>{{ rates.IRR_TRY|floatformat:6 }} TRY</span>
-          </div>
-        {% else %}
-          <p class="text-red-500">
-            {% trans "Unable to fetch live rates right now." %}
-          </p>
-        {% endif %}
+      <div class="p-4">
+        <table id="live-rates-table" class="w-full text-sm">
+          <thead>
+            <tr>
+              <th class="text-left">Pair</th>
+              <th class="text-right">Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if rates.TL_IRR %}
+            <tr>
+              <td>1 TL → IRR</td>
+              <td class="text-right" id="rate-tl-irr">{{ rates.TL_IRR|floatformat:2 }}</td>
+            </tr>
+            <tr>
+              <td>1 IRR → TL</td>
+              <td class="text-right" id="rate-irr-tl">{{ rates.IRR_TL|floatformat:6 }}</td>
+            </tr>
+            <tr>
+              <td>1 USDT → TL</td>
+              <td class="text-right" id="rate-usdt-tl">{{ rates.USDT_TL|floatformat:2 }}</td>
+            </tr>
+            <tr>
+              <td>1 TL → USDT</td>
+              <td class="text-right" id="rate-tl-usdt">{{ rates.TL_USDT|floatformat:4 }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="2" class="text-center text-red-500">{% trans "Unable to fetch live rates right now." %}</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
       </div>
+      <script>
+        async function fetchRates() {
+          try {
+            const resp = await fetch("{% url 'core:live_rates' %}");
+            if (!resp.ok) return;
+            const data = await resp.json();
+            if (data.TL_IRR !== null) {
+              document.getElementById("rate-tl-irr").textContent = Number(data.TL_IRR).toFixed(2);
+              document.getElementById("rate-irr-tl").textContent = Number(data.IRR_TL).toFixed(6);
+              document.getElementById("rate-usdt-tl").textContent = Number(data.USDT_TL).toFixed(2);
+              document.getElementById("rate-tl-usdt").textContent = Number(data.TL_USDT).toFixed(4);
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        }
+        setInterval(fetchRates, 10000);
+      </script>
     </div>
 
     <!-- Your Balances Card -->
@@ -76,13 +115,13 @@
     <div class="p-4">
       <form method="get" class="flex flex-wrap items-end gap-4">
         <div class="flex-1 min-w-[120px]">
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">  
             {% trans "Convert:" %}
           </label>
           {{ conversion_form.direction }}
         </div>
         <div class="flex-1 min-w-[120px]">
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">  
             {% trans "Amount:" %}
           </label>
           {{ conversion_form.amount }}
@@ -95,7 +134,7 @@
         {% if conversion_result is not None %}
           <div class="w-full mt-4">
             <p class="text-lg font-medium text-gray-900 dark:text-gray-100">
-              {% trans "Result:" %} 
+              {% trans "Result:" %}
               {{ conversion_result|floatformat:2 }}
             </p>
           </div>
