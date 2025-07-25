@@ -8,3 +8,7 @@ __pycache__/
 # local venv & env
 tryirr_env/
 .env
+
+# local venv & env
+tryirr_env/
+.env
