@@ -8,6 +8,7 @@ from django.views.generic.edit import FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.conf import settings
+from django.views.decorators.http import require_POST
 
 from .forms import (
     PersonalInfoForm,
@@ -222,6 +223,22 @@ def kyc_start(request):
 @login_required
 def verification(request):
     return render(request, "core/verification_center.html")
+
+
+@login_required
+@require_POST
+def send_code(request):
+    """Endpoint for sending verification codes via SMS or email."""
+    kind = request.POST.get("kind")
+    target = request.POST.get("target")
+    if kind == "phone":
+        code = send_phone_code(target)
+    elif kind == "email":
+        code = send_email_code(target)
+    else:
+        return JsonResponse({"success": False, "error": "invalid kind"}, status=400)
+    request.session[f"{kind}_code"] = code
+    return JsonResponse({"success": True})
 
 
 def rates_api(request):

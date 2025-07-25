@@ -21,6 +21,7 @@ urlpatterns = [
 
     # ✅ Extra Views
     path('verification/', views.verification, name='verification'),
+    path('verification/send-code/', views.send_code, name='send_code'),
     path('rates/', views.rates_api, name='rates'),
     path('updates/', views.updates, name='updates'),
     path('live-rates/', views.live_rates, name='live_rates'),
