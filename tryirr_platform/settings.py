@@ -137,6 +137,9 @@ SOCIALACCOUNT_PROVIDERS = {
 # ─── EMAIL (dev) ────────────────────────────────────────────────────────────────
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
+# SendGrid API key for verification emails
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY", "")
+
 # Instructions displayed during the final KYC step.
 DEPOSIT_INSTRUCTIONS = (
     "Please transfer the required guarantee deposit to our bank account and "
