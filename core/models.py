@@ -89,3 +89,17 @@ class IntegrationSettings(models.Model):
     def __str__(self):
         return "Integration Settings"
 
+
+
+class SiteConfiguration(models.Model):
+    ghasedak_api_key = models.CharField(max_length=255, blank=True)
+    ghasedak_template_name = models.CharField(max_length=255, blank=True)
+    mailgrid_api_key = models.CharField(max_length=255, blank=True)
+    mailgrid_sender = models.EmailField(blank=True)
+
+    class Meta:
+        verbose_name = "Site configuration"
+        verbose_name_plural = "Site configuration"
+
+    def __str__(self):
+        return "Site configuration"

@@ -6,15 +6,15 @@ try:
 except Exception:  # pragma: no cover - optional dependency
     requests = None
 
-from ..models import IntegrationSettings
+from ..models import SiteConfiguration
 
 
 def send_phone_code(phone: str) -> str:
     """Send an SMS verification code via Ghasedak."""
     code = f"{random.randint(100000, 999999)}"
-    settings = IntegrationSettings.get_solo()
-    api_key = settings.ghasedak_api_key
-    template = settings.ghasedak_template_name
+    settings = SiteConfiguration.objects.first()
+    api_key = settings.ghasedak_api_key if settings else ""
+    template = settings.ghasedak_template_name if settings else ""
 
     if requests:
         url = "https://api.ghasedak.io/v2/verification/send/simple"
@@ -32,9 +32,9 @@ def send_phone_code(phone: str) -> str:
 def send_email_code(email: str) -> str:
     """Send a verification code via Mailgrid."""
     code = f"{random.randint(100000, 999999)}"
-    settings = IntegrationSettings.get_solo()
-    api_key = settings.mailgrid_api_key
-    sender = settings.mailgrid_sender_email
+    settings = SiteConfiguration.objects.first()
+    api_key = settings.mailgrid_api_key if settings else ""
+    sender = settings.mailgrid_sender if settings else None
 
     if requests:
         url = "https://api.mailgrid.ir/v1/send"
