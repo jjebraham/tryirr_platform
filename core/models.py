@@ -2,6 +2,7 @@
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 
+
 class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
     phone_verified = models.BooleanField(default=False)
@@ -77,4 +78,26 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return f"{self.username} ({self.phone_number})"
+
+
+class IntegrationSettings(models.Model):
+    ghasedak_api_key = models.CharField(max_length=255)
+    ghasedak_template_name = models.CharField(max_length=100)
+    mailgrid_api_key = models.CharField(max_length=255)
+    mailgrid_sender_email = models.EmailField()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        IntegrationSettings.objects.exclude(id=self.id).delete()
+
+    @classmethod
+    def get_solo(cls):
+        obj = cls.objects.first()
+        if not obj:
+            obj = cls()
+            obj.save()
+        return obj
+
+    def __str__(self):
+        return "Integration Settings"
 
